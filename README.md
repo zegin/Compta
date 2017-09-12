@@ -1,7 +1,7 @@
 # Compta
 
 ## Start Server
-  '''bash
+  ```bash
     cd server
     nodemon index.js
-  '''
+  ```
