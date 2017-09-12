@@ -25,6 +25,7 @@ const UserSchema = new Schema({
     enum: ['Member', 'Client', 'Owner', 'Admin'],
     default: 'Member'
   },
+  configured : {type : Boolean},
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date }
 },
@@ -59,4 +60,4 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
   });
 }
 
-module.exports = mongoose.model('User', UserSchema);  
+module.exports = mongoose.model('User', UserSchema);

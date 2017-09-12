@@ -1,0 +1,16 @@
+import React, { Component } from 'react';
+
+console.log("not found")
+class NotFoundPage extends Component {
+
+  render() {
+    return (
+      <div>
+        <h1>404 - Page Not Found</h1>
+        <p>Im sorry, the page you were looking for cannot be found!</p>
+      </div>
+    )
+  }
+}
+export default NotFoundPage;
+console.log("not found exported")
