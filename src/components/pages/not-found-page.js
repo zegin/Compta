@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-console.log("not found")
 class NotFoundPage extends Component {
 
   render() {
@@ -13,4 +12,3 @@ class NotFoundPage extends Component {
   }
 }
 export default NotFoundPage;
-console.log("not found exported")

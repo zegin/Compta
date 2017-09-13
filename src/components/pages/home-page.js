@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-
-console.log("home")
 class HomePage extends Component {
   render() {
     return (
@@ -10,4 +8,3 @@ class HomePage extends Component {
   }
 }
 export default HomePage;
-console.log("home exported")

@@ -14,6 +14,9 @@ import Download from 'material-ui/svg-icons/file/file-download';
 import Delete from 'material-ui/svg-icons/action/delete';
 import FontIcon from 'material-ui/FontIcon';
 import Drawer from 'material-ui/Drawer';
+
+
+
 const style = {
   container: {
     display: 'flex', /* crée un contexte flex pour ses enfants */
@@ -49,6 +52,8 @@ class App extends Component {
   logout() {
     cookie.remove('token')
     window.location.href = 'http://localhost:8888/'
+  }
+  componentWillMount(){
   }
   render() {
     return (

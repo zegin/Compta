@@ -21,6 +21,8 @@ const token = cookie.load('token');
 if (token) {
   store.dispatch({ type: AUTH_USER });
 }
+else {
+}
 
 
 ReactDOM.render(
