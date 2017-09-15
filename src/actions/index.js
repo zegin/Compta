@@ -70,9 +70,9 @@ export function loginUser({ user, password }) {
     }
   }
 
-export function registerUser({ email, firstName, lastName, password }) {
+export function registerUser({ name, firstName, lastName, password }) {
   return function(dispatch) {
-    axios.post(`${API_URL}/auth/register`, { email, firstName, lastName, password })
+    axios.post(`${API_URL}/auth/register`, querystring.stringify({ name, firstName, lastName, password }))
     .then(response => {
       cookie.save('token', response.data.token, { path: '/' });
       dispatch({ type: AUTH_USER });

@@ -42,21 +42,19 @@ class Login extends Component {
   render() {
 
     const { handleSubmit } = this.props;
-    const userfield =  ({ input, label,...custom }) => (
+    const userfield =  ({ input, label}) => (
       <TextField
         hintText={label}
         floatingLabelText={label}
         {...input}
-        {...custom}
         errorText= {errorUser}
       />
       )
-    const passwordfield =  ({ input, label,...custom }) => (
+    const passwordfield =  ({ input, label}) => (
       <TextField
         hintText={label}
         floatingLabelText={label}
         {...input}
-        {...custom}
         errorText= {errorPassword}
       />
       )
@@ -77,6 +75,7 @@ class Login extends Component {
             <RaisedButton label="Connection" primary={true} style={style} type="submit"/>
           </div>
         </form>
+        <register/>
       </div>
     );
   }
@@ -85,7 +84,10 @@ class Login extends Component {
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
 };
 
 function mapStateToProps(state) {
@@ -94,5 +96,5 @@ function mapStateToProps(state) {
     message: state.auth.message
   };
 }
-
-export default connect(mapStateToProps, { loginUser })(form(Login));
+Login = connect(mapStateToProps, { loginUser })(form(Login));
+export default Login
