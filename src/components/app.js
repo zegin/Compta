@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 import jwtDecode from 'jwt-decode';
+
 import AppBar from 'material-ui/AppBar';
 import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
@@ -12,7 +13,7 @@ import Divider from 'material-ui/Divider';
 import ContentCopy from 'material-ui/svg-icons/content/content-copy';
 import Download from 'material-ui/svg-icons/file/file-download';
 import Delete from 'material-ui/svg-icons/action/delete';
-import FontIcon from 'material-ui/FontIcon';
+// import FontIcon from 'material-ui/FontIcon';
 import Drawer from 'material-ui/Drawer';
 
 
@@ -24,8 +25,8 @@ const style = {
     minHeight: '100vh', /* toute la hauteur du viewport */
   },
   wrapper: {
-    flex : '1 1 auto',
-    display : 'flex'
+    flex: '1 1 auto',
+    display: 'flex'
   },
   rightIcon: {
     textAlign: 'center',
@@ -46,9 +47,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {open: false};
-    if(cookie.load('token', false)){this.state = {user : jwtDecode(cookie.load('token', false))}}
+    if(cookie.load('token', false)){this.state = {user: jwtDecode(cookie.load('token', false))}}
   }
-  handleToggle = () => this.setState({open: !this.state.open})
+  handleToggle(){
+    this.setState({open: !this.state.open})
+  }
   logout() {
     cookie.remove('token')
     window.location.href = 'http://localhost:8888/'

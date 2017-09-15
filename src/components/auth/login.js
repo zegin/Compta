@@ -1,49 +1,92 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { Link } from 'react-router';
+// import { Link } from 'react-router';
 import { loginUser } from '../../actions';
+import PropTypes from 'prop-types';
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
+import asyncValidate from './asyncValidate';
+import validate from './validate';
 
 const form = reduxForm({
   form: 'login'
 });
-
+var errorUser = "";
+var errorPassword = "";
 class Login extends Component {
   handleFormSubmit(formProps) {
+    // console.log(this.props.loginUser.type)
     this.props.loginUser(formProps);
   }
 
   renderAlert() {
+    errorUser = "";
+    errorPassword = "";
     if(this.props.errorMessage) {
-      return (
-        <div>
-          <span>{this.props.errorMessage}</span>
-        </div>
-      );
+      switch (this.props.errorMessage.type) {
+        case "user":
+          errorUser = this.props.errorMessage.message
+          break;
+        case "password":
+          errorPassword = this.props.errorMessage.message
+          break;
+        default:
+          return (
+            <div>Une erreur inconnu c'est produite</div>
+          )
+      }
     }
   }
 
   render() {
-    const { handleSubmit } = this.props;
 
+    const { handleSubmit } = this.props;
+    const userfield =  ({ input, label,...custom }) => (
+      <TextField
+        hintText={label}
+        floatingLabelText={label}
+        {...input}
+        {...custom}
+        errorText= {errorUser}
+      />
+      )
+    const passwordfield =  ({ input, label,...custom }) => (
+      <TextField
+        hintText={label}
+        floatingLabelText={label}
+        {...input}
+        {...custom}
+        errorText= {errorPassword}
+      />
+      )
+    const style = {
+        margin: 12,
+      };
     return (
       <div>
         <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
         {this.renderAlert()}
           <div>
-            <label>Email</label>
-            <Field name="email" className="form-control" component="input" type="text" />
+            <Field name="user" component={userfield} label="Utilisateur"/>
           </div>
           <div>
-            <label>Password</label>
-            <Field name="password" className="form-control" component="input" type="password" />
+            <Field name="password" component={passwordfield} label="Mot de passe"/>
           </div>
-          <button type="submit" className="btn btn-primary">Login</button>
+          <div>
+            <RaisedButton label="Connection" primary={true} style={style} type="submit"/>
+          </div>
         </form>
       </div>
     );
   }
 }
+
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string
+};
 
 function mapStateToProps(state) {
   return {

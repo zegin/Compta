@@ -1,17 +1,19 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 
 import App from './components/app';
 import NotFoundPage from './components/pages/not-found-page';
 
-import HomePage from './components/pages/home-page';
+// import HomePage from './components/pages/home-page';
 import Register from './components/auth/register';
 import Login from './components/auth/login';
 import Dashboard from './components/dashboard';
 import RequireAuth from './components/auth/require-auth';
 
-const token = cookie.load('token');
+if (cookie.load('token')) {
+  var token = cookie.load('token');
+}
 
 export default (
   <Route path="/" component={App}>

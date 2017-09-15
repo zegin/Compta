@@ -8,7 +8,7 @@ import reduxThunk from 'redux-thunk';
 import routes from './routes';
 import reducers from './reducers/index';
 import { AUTH_USER } from './actions/types';
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -16,22 +16,18 @@ import './styles/bootstrap/css/bootstrap.min.css';
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 const store = createStoreWithMiddleware(reducers);
-const token = cookie.load('token');
 
-if (token) {
+if (cookie.load('token')) {
   store.dispatch({ type: AUTH_USER });
 }
-else {
-}
-
 
 ReactDOM.render(
   <AppContainer>
-    <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-      <Provider store={store}>
-        <Router history={browserHistory} routes={routes} />
-      </Provider>
-    </MuiThemeProvider>
+      <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+        <Provider store={store}>
+          <Router history={browserHistory} routes={routes} />
+        </Provider>
+      </MuiThemeProvider>
   </AppContainer>,
   document.getElementById('app')
 );
@@ -40,7 +36,7 @@ ReactDOM.render(
 if (module.hot) {
     ReactDOM.render(
       <AppContainer>
-        <MuiThemeProvider>
+        <MuiThemeProvider muiTheme={getMuiTheme()}>
           <Provider store={store}>
             <Router history={browserHistory} routes={routes} />
           </Provider>

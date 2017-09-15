@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 import jwtDecode from 'jwt-decode';
-import RaisedButton from 'material-ui/RaisedButton';
+// import RaisedButton from 'material-ui/RaisedButton';
 
 class Dashboard extends Component {
 
   constructor(props) {
     super(props);
     this.props.protectedTest();
-    this.state = {user : jwtDecode(cookie.load('token', false))}
+    this.state = {user: jwtDecode(cookie.load('token', false))}
   }
 
   renderContent() {
