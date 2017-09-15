@@ -1,10 +1,6 @@
 import React from 'react';
-// import {
-//   BrowserRouter as Router,
-//   Route,
-//   Link
-// } from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 
 export default class Connection extends React.Component {
@@ -25,3 +21,7 @@ export default class Connection extends React.Component {
     )
   }
 }
+
+Connection.propTypes = {
+  handleConnection: PropTypes.func.isRequired
+};

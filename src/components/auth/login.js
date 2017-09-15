@@ -6,8 +6,6 @@ import { loginUser } from '../../actions';
 import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import asyncValidate from './asyncValidate';
-import validate from './validate';
 
 const form = reduxForm({
   form: 'login'
@@ -33,7 +31,7 @@ class Login extends Component {
           break;
         default:
           return (
-            <div>Une erreur inconnu c'est produite</div>
+            <div>Une erreur inconnu c&lsquo;est produite</div>
           )
       }
     }
@@ -83,7 +81,7 @@ class Login extends Component {
 
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func,
   errorMessage: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object

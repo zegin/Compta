@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
+import PropTypes from 'prop-types';
 import { registerUser } from '../../actions';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
-const form = reduxForm({
-  form: 'register',
-  validate
-});
 
 function validate(formProps) {
   const errors = {};
@@ -32,7 +28,17 @@ function validate(formProps) {
   return errors;
 }
 
-var errorUser,errorLastName,errorFirstName,errorPassword = ""
+const form = reduxForm({
+  form: 'register',
+  validate
+});
+
+
+
+var errorUser = ""
+var errorLastName = ""
+var errorFirstName = ""
+var errorPassword = ""
 
 class Register extends Component {
   handleFormSubmit(formProps) {
@@ -91,4 +97,14 @@ function mapStateToProps(state) {
   };
 }
 Register = connect(mapStateToProps, { registerUser })(form(Register));
+
+Register.propTypes = {
+  registerUser: PropTypes.func,
+  handleSubmit: PropTypes.func,
+  errorMessage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
+};
+
 export default Register
