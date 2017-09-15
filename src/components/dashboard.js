@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import cookie from 'react-cookies';
 import jwtDecode from 'jwt-decode';
+import PropTypes from 'prop-types';
 // import RaisedButton from 'material-ui/RaisedButton';
 
 class Dashboard extends Component {
@@ -35,5 +36,13 @@ class Dashboard extends Component {
 function mapStateToProps(state) {
   return { content: state.auth.content };
 }
+
+Dashboard.propTypes = {
+  protectedTest: PropTypes.func.isRequired,
+  content: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
+};
 
 export default connect(mapStateToProps, actions)(Dashboard);

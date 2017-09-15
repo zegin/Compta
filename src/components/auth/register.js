@@ -1,19 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
+import PropTypes from 'prop-types';
 import { registerUser } from '../../actions';
-
-const form = reduxForm({
-  form: 'register',
-  validate
-});
-
-const renderField = field => (
-    <div>
-      <input className="form-control" {...field.input}/>
-      {field.touched && field.error && <div className="error">{field.error}</div>}
-    </div>
-);
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
 
 function validate(formProps) {
   const errors = {};
@@ -26,8 +17,8 @@ function validate(formProps) {
     errors.lastName = 'Please enter a last name';
   }
 
-  if (!formProps.email) {
-    errors.email = 'Please enter an email';
+  if (!formProps.name) {
+    errors.name = 'Please enter an name';
   }
 
   if (!formProps.password) {
@@ -36,6 +27,18 @@ function validate(formProps) {
 
   return errors;
 }
+
+const form = reduxForm({
+  form: 'register',
+  validate
+});
+
+
+
+var errorUser = ""
+var errorLastName = ""
+var errorFirstName = ""
+var errorPassword = ""
 
 class Register extends Component {
   handleFormSubmit(formProps) {
@@ -54,33 +57,34 @@ class Register extends Component {
 
   render() {
     const { handleSubmit } = this.props;
+    const textfield =  ({ input, label, error}) => (
+      <TextField
+        hintText={label}
+        floatingLabelText={label}
+        {...input}
+        errorText= {error}
+      />
+    )
+    const style = {
+        margin: 12,
+      };
 
     return (
       <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
-      {this.renderAlert()}
-      <div className="row">
-        <div className="col-md-6">
-          <label>First Name</label>
-          <Field name="firstName" className="form-control" component={renderField} type="text" />
+        {this.renderAlert()}
+        <div>
+          <Field name="lastName" component={textfield} type="text" label="Nom" error={errorLastName}/>
         </div>
-        <div className="col-md-6">
-          <label>Last Name</label>
-          <Field name="lastName" className="form-control" component={renderField} type="text" />
+        <div>
+          <Field name="firstName" component={textfield} type="text" label="Prenom" error={errorFirstName}/>
         </div>
-      </div>
-        <div className="row">
-          <div className="col-md-12">
-            <label>Email</label>
-            <Field name="email" className="form-control" component={renderField} type="text" />
-          </div>
+        <div>
+          <Field name="name" component={textfield} type="text" label="Nom d'Utilisateur" error={errorUser}/>
         </div>
-        <div className="row">
-          <div className="col-md-12">
-            <label>Password</label>
-            <Field name="password" className="form-control" component={renderField} type="password" />
-          </div>
+        <div>
+          <Field name="password" component={textfield} type="password"  label="Mot de passe" error={errorPassword}/>
         </div>
-        <button type="submit" className="btn btn-primary">Register</button>
+        <RaisedButton label="S'enregistrer" primary={true} style={style} type="submit"/>
       </form>
     );
   }
@@ -92,5 +96,15 @@ function mapStateToProps(state) {
     message: state.auth.message
   };
 }
+Register = connect(mapStateToProps, { registerUser })(form(Register));
 
-export default connect(mapStateToProps, { registerUser })(form(Register));
+Register.propTypes = {
+  registerUser: PropTypes.func,
+  handleSubmit: PropTypes.func,
+  errorMessage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ])
+};
+
+export default Register
