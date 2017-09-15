@@ -12,11 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alicoding/react-webpack-babel"
+    "url": "https://github.com/zegin/Compta"
   },
-  "author": "Ali Al Dallal",
-  "license": "MIT",
-  "homepage": "https://github.com/alicoding/react-webpack-babel#readme",
+  "author": "Gilian Gonnord",
+  "homepage": "https://github.com/zegin/Compta",
   "dependencies": {
     "axios": "^0.16.2",
     "babel-preset-stage-0": "^6.24.1",
