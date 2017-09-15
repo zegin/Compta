@@ -6,7 +6,7 @@ var app         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
-
+var cors        = require('cors')
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
 var User   = require('./app/models/user'); // get our mongoose model
@@ -24,31 +24,13 @@ app.use(bodyParser.json());
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
-
+app.use(cors());
 // =======================
 // routes ================
 // =======================
 // basic route
 app.get('/', function(req, res) {
     res.send('Hello! The API is at http://localhost:' + port + '/api');
-});
-
-app.get('/setup', function(req, res) {
-
-  // create a sample user
-  var nick = new User({
-    name: 'Nick Cerminara',
-    password: 'password',
-    admin: true
-  });
-
-  // save the sample user
-  nick.save(function(err) {
-    if (err) throw err;
-
-    console.log('User saved successfully');
-    res.json({ success: true });
-  });
 });
 
 // API ROUTES -------------------
@@ -58,10 +40,6 @@ var apiRoutes = express.Router();
 
 // route to authenticate a user (POST http://localhost:3000/api/authenticate)
 apiRoutes.post('/authenticate', function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials");
-  res.header("Access-Control-Allow-Credentials", "true");
   // find the user
   User.findOne({
     name: req.body.user
@@ -97,11 +75,74 @@ apiRoutes.post('/authenticate', function(req, res) {
   });
 });
 
+// route to register a user (POST http://localhost:3000/api/register)
+apiRoutes.post('/register', function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials");
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  // create a sample user
+  var nick = new User({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    name: req.body.name,
+    password: req.body.password
+  });
+  // save the sample user
+  nick.save(function(err) {
+    if (err) throw err;
+
+    var token = jwt.sign(nick, app.get('superSecret'), {
+      expiresInMinutes: 1440 // expires in 24 hours
+    });
+
+    res.json({
+      success: true,
+      message: 'Enjoy your token!',
+      token: token
+    });
+  });
+});
+
+// route to register a user (POST http://localhost:3000/api/register)
+apiRoutes.get('/protected', function(req, res) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  console.log(token)
+  //
+  // // create a sample user
+  // var nick = new User({
+  //   firstName: req.body.firstName,
+  //   lastName: req.body.lastName,
+  //   name: req.body.name,
+  //   password: req.body.password
+  // });
+  // // save the sample user
+  // nick.save(function(err) {
+  //   if (err) throw err;
+  //
+  //   var token = jwt.sign(nick, app.get('superSecret'), {
+  //     expiresInMinutes: 1440 // expires in 24 hours
+  //   });
+  //
+  jwt.verify(token, app.get('superSecret'), function(err) {
+    if (err) {
+      return res.json({ success: false, content: 'Failed to authenticate token.' });
+    } else {
+      res.json({
+        success: true,
+        content: "Protected passed"
+      });
+    }
+  });
+});
+
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
 
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  console.log(token)
 
   // decode token
   if (token) {
@@ -118,7 +159,7 @@ apiRoutes.use(function(req, res, next) {
     });
 
   } else {
-
+    console.log("no token")
     // if there is no token
     // return an error
     return res.status(403).send({
@@ -141,6 +182,7 @@ apiRoutes.get('/users', function(req, res) {
     res.json(users);
   });
 });
+
 
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);

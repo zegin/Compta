@@ -14,7 +14,7 @@ export function logoutUser() {
     dispatch({ type: UNAUTH_USER });
     cookie.remove('token', { path: '/' });
 
-    window.location.href = CLIENT_ROOT_URL + '/login';
+    window.location.href = CLIENT_ROOT_URL + '/';
   }
 }
 
@@ -72,7 +72,7 @@ export function loginUser({ user, password }) {
 
 export function registerUser({ name, firstName, lastName, password }) {
   return function(dispatch) {
-    axios.post(`${API_URL}/auth/register`, querystring.stringify({ name, firstName, lastName, password }))
+    axios.post(`${API_URL}/register`, querystring.stringify({ name, firstName, lastName, password }))
     .then(response => {
       cookie.save('token', response.data.token, { path: '/' });
       dispatch({ type: AUTH_USER });
@@ -88,15 +88,26 @@ export function registerUser({ name, firstName, lastName, password }) {
 export function protectedTest() {
   return function(dispatch) {
     axios.get(`${API_URL}/protected`, {
-      headers: { 'Authorization': cookie.load('token') }
+      headers: {
+        'postman-token': 'c5511295-f8dd-2aa2-71be-4b15de28fa9c',
+        'cache-control': 'no-cache',
+        'x-access-token': cookie.load('token')
+      }
     })
     .then(response => {
-      dispatch({
-        type: PROTECTED_TEST,
-        payload: response.data.content
-      });
+      if(response.data.success){
+        dispatch({
+          type: PROTECTED_TEST,
+          payload: response.data.content
+        });
+      }
+      else{
+        cookie.remove('token', { path: '/' });
+        window.location.href = CLIENT_ROOT_URL + '/';
+      }
     })
     .catch((error) => {
+      console.log("protectedTest not passed")
       errorHandler(dispatch, error.response, AUTH_ERROR)
     });
   }
