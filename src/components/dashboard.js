@@ -11,7 +11,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.props.protectedTest();
-    this.state = {user: jwtDecode(cookie.load('token', false))}
+    this.state = {user: jwtDecode(cookie.load('token', true))._doc}
   }
 
   renderContent() {
