@@ -1,33 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-// import { Link } from 'react-router';
 import { loginUser } from '../../actions';
 import PropTypes from 'prop-types';
-import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import {
+  TextField
+} from 'redux-form-material-ui'
 
 const form = reduxForm({
   form: 'login'
 });
-var errorUser = "";
-var errorPassword = "";
+var error = {user: '', password: ''}
 class Login extends Component {
   handleFormSubmit(formProps) {
-    // console.log(this.props.loginUser.type)
     this.props.loginUser(formProps);
   }
 
   renderAlert() {
-    errorUser = "";
-    errorPassword = "";
+    error.user = "";
+    error.password = "";
     if(this.props.errorMessage) {
       switch (this.props.errorMessage.type) {
         case "user":
-          errorUser = this.props.errorMessage.message
+          error.user = this.props.errorMessage.message
           break;
         case "password":
-          errorPassword = this.props.errorMessage.message
+          error.password = this.props.errorMessage.message
           break;
         default:
           return (
@@ -40,22 +39,6 @@ class Login extends Component {
   render() {
 
     const { handleSubmit } = this.props;
-    const userfield =  ({ input, label}) => (
-      <TextField
-        hintText={label}
-        floatingLabelText={label}
-        {...input}
-        errorText= {errorUser}
-      />
-      )
-    const passwordfield =  ({ input, label}) => (
-      <TextField
-        hintText={label}
-        floatingLabelText={label}
-        {...input}
-        errorText= {errorPassword}
-      />
-      )
     const style = {
         margin: 12,
       };
@@ -64,10 +47,10 @@ class Login extends Component {
         <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
         {this.renderAlert()}
           <div>
-            <Field name="user" component={userfield} label="Utilisateur"/>
+            <Field name="user" component={TextField} hintText="Utilisateur" floatingLabelText="Utilisateur" errorText= {error.user}/>
           </div>
           <div>
-            <Field name="password" component={passwordfield} label="Mot de passe"/>
+            <Field name="password" component={TextField} hintText="Mot de passe" floatingLabelText="Mot de passe" errorText= {error.password}/>
           </div>
           <div>
             <RaisedButton label="Connection" primary={true} style={style} type="submit"/>

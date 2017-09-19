@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 export default function(ComposedComponent) {
   class Configuration extends Component {
     static contextTypes = {
-      router: React.PropTypes.object
+      configured: PropTypes.object.isRequired,
+      router: PropTypes.object
     }
 
     componentWillMount() {
@@ -28,6 +30,10 @@ export default function(ComposedComponent) {
   function mapStateToProps(state) {
     return { configured: state.configure.configured };
   }
+
+  Configuration.propTypes = {
+    configured: PropTypes.object.isRequired
+  };
 
   return connect(mapStateToProps)(Configuration);
 }
