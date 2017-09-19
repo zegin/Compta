@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 export default function(ComposedComponent) {
   class Authentication extends Component {
     static contextTypes = {
-      authenticated: PropTypes.object.isRequired,
+      authenticated: PropTypes.bool,
       router: PropTypes.object
     }
 
@@ -31,7 +31,7 @@ export default function(ComposedComponent) {
   }
 
   Authentication.propTypes = {
-    authenticated: PropTypes.object.isRequired
+    authenticated: PropTypes.bool
   };
 
   return connect(mapStateToProps)(Authentication);

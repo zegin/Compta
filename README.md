@@ -1,6 +1,11 @@
 # Compta
 
-## Instal and start
+## Install and start
+
+### MongoDB
+  Just install a mongo database, following this link :
+
+  [mongo documentation](https://docs.mongodb.com/manual/mongo/)
 
 ### Start Server
   ```bash
