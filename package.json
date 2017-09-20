@@ -19,6 +19,7 @@
   "author": "Gilian Gonnord",
   "homepage": "https://github.com/zegin/Compta",
   "dependencies": {
+    "apidoc": "^0.17.6",
     "axios": "^0.16.2",
     "babel-preset-stage-0": "^6.24.1",
     "chart.js": "^2.7.0",
