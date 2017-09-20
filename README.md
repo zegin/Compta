@@ -22,10 +22,19 @@
   ```
 
 ## Contribution
+  * Api documentation is on :
+
+        your_absolute_project_path + /apidoc/index.html
+    Example :
+
+        file:///C:/wamp64/www/Compta/apidoc/index.html
   * Test your code and **lint**
       ```bash
         npm run lint
       ```
+  * If you have modified the api think to regenere doc
+
+        apidoc -i server/ -f "server.js" -o apidoc/
   * If necessary change version
       ```bash
         git tag -a [version]
