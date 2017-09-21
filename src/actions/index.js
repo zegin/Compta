@@ -1,10 +1,12 @@
 import axios from 'axios';
 // import { browserHistory } from 'react-router';
 import cookie from 'react-cookies';
-import { AUTH_USER,
-         AUTH_ERROR,
-         UNAUTH_USER,
-         PROTECTED_TEST } from './types';
+import {
+  AUTH_USER,
+  AUTH_ERROR,
+  UNAUTH_USER,
+  PROTECTED_TEST,
+  CONFIGURED} from './types';
 import querystring from 'querystring';
 const API_URL = 'http://localhost:3000/api';
 const CLIENT_ROOT_URL = 'http://localhost:8888';
@@ -67,8 +69,8 @@ export function loginUser({ user, password }) {
       console.log(error)
       errorHandler(dispatch, error.response, AUTH_ERROR)
     });
-    }
   }
+}
 
 export function registerUser({ name, firstName, lastName, password }) {
   return function(dispatch) {
@@ -109,6 +111,28 @@ export function protectedTest() {
     .catch((error) => {
       console.log("protectedTest not passed")
       errorHandler(dispatch, error.response, AUTH_ERROR)
+    });
+  }
+}
+
+export function configureUser({hearth, newHearth, wage, budget, saving}) {
+  return function(dispatch) {
+    axios.post(`${API_URL}/configure`, querystring.stringify({token: cookie.load('token'), hearth, newHearth, wage, budget, saving}))
+    .then(response => {
+      if(response.data.success){
+        cookie.save('token', response.data.token, { path: '/' });
+        dispatch({
+          type: CONFIGURED
+        });
+        window.location.href = CLIENT_ROOT_URL + '/dashboard';
+      }
+      else{
+        console.log('pas success');
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+      // errorHandler(dispatch, error.response, AUTH_ERROR)
     });
   }
 }

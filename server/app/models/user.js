@@ -9,4 +9,7 @@ module.exports = mongoose.model('User', new Schema({
     name: String,
     password: String,
     hearth: Number,
+    wage: Number,
+    budget: Number,
+    saving: Number
 }));

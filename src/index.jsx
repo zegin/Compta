@@ -8,17 +8,24 @@ import reduxThunk from 'redux-thunk';
 import routes from './routes';
 import reducers from './reducers/index';
 import { AUTH_USER } from './actions/types';
+import { CONFIGURED } from './actions/types';
 import cookie from 'react-cookies';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import './styles/bootstrap/css/bootstrap.min.css';
+import jwtDecode from 'jwt-decode';
+
+
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 const store = createStoreWithMiddleware(reducers);
 
 if (cookie.load('token')) {
   store.dispatch({ type: AUTH_USER });
+  if(jwtDecode(cookie.load('token', true))._doc.wage){
+    store.dispatch({ type: CONFIGURED });
+  }
 }
 
 ReactDOM.render(

@@ -6,15 +6,17 @@ import NotFoundPage from './components/pages/not-found-page';
 import Auth from './components/auth/auth';
 import Dashboard from './components/dashboard';
 import RequireAuth from './components/auth/require-auth';
-
+import RequireConfig from './components/auth/require-config';
+import Configure from './components/account/configure'
 if (cookie.load('token')) {
   var token = cookie.load('token');
 }
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={token ? RequireAuth(Dashboard) : Auth} />
-    <Route path="dashboard" component={RequireAuth(Dashboard)} />
+    <IndexRoute component={token ? RequireAuth(RequireConfig(Dashboard)) : Auth} />
+    <Route path="dashboard" component={RequireConfig(Dashboard)} />
+    <Route path="configure" component={RequireAuth(Configure)} />
     <Route path="*" component={NotFoundPage} />
   </Route>
 );
