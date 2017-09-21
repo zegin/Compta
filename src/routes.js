@@ -15,7 +15,7 @@ if (cookie.load('token')) {
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={token ? RequireAuth(RequireConfig(Dashboard)) : Auth} />
-    <Route path="dashboard" component={RequireAuth(RequireConfig(Dashboard))} />
+    <Route path="dashboard" component={RequireConfig(Dashboard)} />
     <Route path="configure" component={RequireAuth(Configure)} />
     <Route path="*" component={NotFoundPage} />
   </Route>

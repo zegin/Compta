@@ -124,6 +124,98 @@ define({ "api": [
     "groupTitle": "Api"
   },
   {
+    "type": "post",
+    "url": "/api/configure",
+    "title": "Configure",
+    "name": "Configure",
+    "group": "Api",
+    "description": "<p>Save user configuration into database</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>jwt token</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "heart",
+            "description": "<p>User heart name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "wage",
+            "description": "<p>User wage</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "budget",
+            "description": "<p>User budget</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "saving",
+            "description": "<p>User saving</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success": [
+          {
+            "group": "Success",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true</p>"
+          },
+          {
+            "group": "Success",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>updated jwt token</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "server/server.js",
+    "groupTitle": "Api",
+    "error": {
+      "fields": {
+        "Error 403": [
+          {
+            "group": "Error 403",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error 403",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>No token provided.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "get",
     "url": "/api/protected",
     "title": "Protected",

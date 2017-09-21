@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 export default function(ComposedComponent) {
   class Configuration extends Component {
     static contextTypes = {
-      configured: PropTypes.object.isRequired,
+      configured: PropTypes.bool,
       router: PropTypes.object
     }
 
@@ -17,6 +17,7 @@ export default function(ComposedComponent) {
     }
 
     componentWillUpdate(nextProps) {
+      console.log(this.props)
       if(!nextProps.configured) {
         this.context.router.push('/configure');
       }
@@ -28,11 +29,12 @@ export default function(ComposedComponent) {
   }
 
   function mapStateToProps(state) {
+    console.log(state)
     return { configured: state.configure.configured };
   }
 
   Configuration.propTypes = {
-    configured: PropTypes.object.isRequired
+    configured: PropTypes.bool
   };
 
   return connect(mapStateToProps)(Configuration);

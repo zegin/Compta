@@ -10,6 +10,7 @@ var cors        = require('cors')
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
 var User   = require('./app/models/user'); // get our mongoose model
+var Hearth   = require('./app/models/hearth'); // get our mongoose model
 
 // =======================
 // configuration =========
@@ -87,6 +88,7 @@ apiRoutes.post('/authenticate', function(req, res) {
 
         // if user is found and password is right
         // create a token
+        console.log(app.get('superSecret'))
         var token = jwt.sign(user, app.get('superSecret'), {
           expiresInMinutes: 1440 // expires in 24 hours
         });
@@ -121,10 +123,6 @@ apiRoutes.post('/authenticate', function(req, res) {
 
 // route to register a user (POST http://localhost:3000/api/register)
 apiRoutes.post('/register', function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials");
-  res.header("Access-Control-Allow-Credentials", "true");
 
   // create a sample user
   var nick = new User({
@@ -207,6 +205,64 @@ apiRoutes.get('/users', function(req, res) {
   });
 });
 
+/**
+ * @api {post} /api/configure Configure
+ * @apiName Configure
+ * @apiGroup Api
+ * @apiDescription
+ * Save user configuration into database
+ * @apiUse ApiMiddleware
+ * @apiParam {String} token jwt token
+ * @apiParam {String} heart User heart name
+ * @apiParam {String} wage User wage
+ * @apiParam {String} budget User budget
+ * @apiParam {String} saving User saving
+ * @apiSuccess (Success) {Boolean} success true
+ * @apiSuccess (Success) {String} token updated jwt token
+ */
+
+// route to confiure a user (POST http://localhost:3000/api/configure)
+apiRoutes.post('/configure', function(req, res) {
+
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var nick = jwt.decode(token)._doc
+  User.findOne({name : nick.name}, function(err,user){
+    if(err){res.send(err)}
+    else{
+      if(req.body.wage){
+        user.wage = req.body.wage
+        user.markModified('wage')
+      }
+      if(req.body.budget){
+        user.budget = req.body.budget
+        user.markModified('budget')
+      }
+      if(req.body.saving){
+        user.saving = req.body.saving
+        user.markModified('saving')
+      }
+      if(req.body.hearth){
+        console.log(req.body.hearth);
+        Hearth.findOne({name: req.body.hearth},function(err,hearth){
+          console.log(hearth)
+          hearth.users.push(user)
+          hearth.save()
+          console.log(hearth);
+        })
+      }
+      user.save(()=>{
+        token = jwt.sign(user, app.get('superSecret'), {
+            expiresInMinutes: 1440 // expires in 24 hours
+          })
+        res.json({
+            success: true,
+            token: token,
+            content : "user configured"
+          })
+      })
+    }
+  })
+});
 
 /**
  * @apiDefine ApiMiddleware

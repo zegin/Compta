@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { loginUser } from '../../actions';
+import { configureUser } from '../../actions';
 import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
 import jwtDecode from 'jwt-decode';
@@ -14,10 +14,10 @@ import {
 import {Doughnut} from 'react-chartjs-2';
 
 const form = reduxForm({
-  form: 'login'
+  form: 'configure'
 });
 
-var error = {wage: '', heart: '', budget: '', select: '', saving: ''}
+var error = {wage: '', hearth: '', budget: '', select: '', saving: ''}
 var stateHide = {opacity: 0, display: 'none'}
 var doughnut = null;
 
@@ -45,9 +45,7 @@ class Configure extends Component {
   }
 
   doughnutUpdate() {
-    console.log(this.state.saving)
     if(this.state.wage && this.state.budget && this.state.saving){
-      console.log(this.state);
       doughnut = <Doughnut data={{
           labels: [
             'Budget',
@@ -77,8 +75,9 @@ class Configure extends Component {
 
 
   handleFormSubmit(formProps) {
-    this.validate(formProps)
-    console.log(formProps)
+    if(this.validate(formProps)){
+      this.props.configureUser(formProps);
+    }
   }
 
   validate(formProps){
@@ -100,12 +99,12 @@ class Configure extends Component {
         error.saving = "Ne rentrez que des chifres svp"
       }
     }
-    if(formProps.newHeart){
-      if(!/[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$/g.test(formProps.newHeart)){
-        error.heart = "Ne rentrez aucun caractère spécial svp"
+    if(formProps.newHearth){
+      if(!/[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$/g.test(formProps.newHearth)){
+        error.hearth = "Ne rentrez aucun caractère spécial svp"
       }
-      console.log(error.heart)
     }
+    return true
   }
 
   render() {
@@ -156,14 +155,14 @@ class Configure extends Component {
         <p>Pour votre première connection, nous allons configurer votre compte</p>
         <form style={style.container} onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
           <div style={Object.assign({}, style.full, style.row1)}>
-            <Field name="heart" component={SelectField} floatingLabelText="Dans quel foyez êtes vous ?"
+            <Field name="hearth" component={SelectField} floatingLabelText="Dans quel foyez êtes vous ?"
               onChange={this.handleChange.bind(this)} errorText={error.select}>
               <MenuItem value="GigiCaro" primaryText="GigiCaro"/>
               <MenuItem value={-1} primaryText="Aucun"/>
             </Field>
           </div>
           <div style={Object.assign({}, style.stateHide, style.row1)}>
-            <Field name="newHeart" component={TextField} type="text" floatingLabelText="Entrez une nouveau foyer" hintText="votre foyer" errorText={error.heart} required={this.state.value === -1 ? true : false}/>
+            <Field name="newHearth" component={TextField} type="text" floatingLabelText="Entrez une nouveau foyer" hintText="votre foyer" errorText={error.hearth} required={this.state.value === -1 ? true : false}/>
           </div>
           <div style={style.doughnut}>
             {doughnut}
@@ -190,7 +189,7 @@ class Configure extends Component {
 }
 
 Configure.propTypes = {
-  loginUser: PropTypes.func.isRequired,
+  configureUser: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func,
   errorMessage: PropTypes.oneOfType([
     PropTypes.string,
@@ -201,9 +200,9 @@ Configure.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    errorMessage: state.auth.error,
-    message: state.auth.message
+    errorMessage: state.configure.error,
+    message: state.configure.message
   };
 }
-Configure = connect(mapStateToProps, { loginUser })(form(Configure));
+Configure = connect(mapStateToProps, { configureUser })(form(Configure));
 export default Configure

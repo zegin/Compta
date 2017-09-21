@@ -9,6 +9,5 @@ export default function (state = INITIAL_STATE, action) {
     case UNCONFIGURED:
       return { ...state, configured: false, error: action.payload };
   }
-
   return state;
 }
