@@ -34,3 +34,6 @@ public
 
 # Ignore yarn files
 yarn.lock
+
+server/swagger-ui
+server/dist
