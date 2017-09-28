@@ -23,10 +23,10 @@ class Auth extends Component {
     return (
       <div style={style.container}>
         <div style={style.login}>
-          <Login/>
+          <Login />
         </div>
         <div style={style.register}>
-          <Register/>
+          <Register />
         </div>
       </div>
     );

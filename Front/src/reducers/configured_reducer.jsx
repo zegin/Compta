@@ -8,6 +8,8 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, error: '', message: '', configured: true };
     case UNCONFIGURED:
       return { ...state, configured: false, error: action.payload };
+    default:
+      break;
   }
   return state;
 }

@@ -5,7 +5,7 @@ import App from './app'
 
 ReactDOM.render(
   <AppContainer>
-    <App/>
+    <App />
   </AppContainer>,
   document.getElementById('app')
 );
@@ -13,10 +13,10 @@ ReactDOM.render(
 // Hot Module Replacement API
 if (module.hot) {
   module.hot.accept('./app', () => {
-    const NextApp = require('./app').default;
+    const NextApp = require('./app').default; // eslint-disable-line
     ReactDOM.render(
       <AppContainer>
-        <NextApp/>
+        <NextApp />
       </AppContainer>,
       document.getElementById('app')
     );

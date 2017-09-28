@@ -1,31 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { loginUser } from '../../actions';
-import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 import {
   TextField
 } from 'redux-form-material-ui'
+import PropTypes from 'prop-types';
+import { loginUser } from '../../actions';
+
 
 const form = reduxForm({
   form: 'login'
 });
-var error = {user: '', password: ''}
+const error = { user: '', password: '' }
 class Login extends Component {
   handleFormSubmit(formProps) {
     this.props.loginUser(formProps);
   }
 
   renderAlert() {
-    error.user = "";
-    error.password = "";
-    if(this.props.errorMessage) {
+    error.user = '';
+    error.password = '';
+    if (this.props.errorMessage) {
       switch (this.props.errorMessage.type) {
-        case "user":
+        case 'user':
           error.user = this.props.errorMessage.message
           break;
-        case "password":
+        case 'password':
           error.password = this.props.errorMessage.message
           break;
         default:
@@ -37,26 +38,25 @@ class Login extends Component {
   }
 
   render() {
-
     const { handleSubmit } = this.props;
     const style = {
-        margin: 12,
-      };
+      margin: 12,
+    };
     return (
       <div>
         <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
-        {this.renderAlert()}
+          {this.renderAlert()}
           <div>
-            <Field name="user" component={TextField} hintText="Utilisateur" floatingLabelText="Utilisateur" errorText= {error.user}/>
+            <Field name="user" component={TextField} hintText="Utilisateur" floatingLabelText="Utilisateur" errorText={error.user} />
           </div>
           <div>
-            <Field name="password" component={TextField} hintText="Mot de passe" floatingLabelText="Mot de passe" errorText= {error.password}/>
+            <Field name="password" component={TextField} hintText="Mot de passe" floatingLabelText="Mot de passe" errorText={error.password} />
           </div>
           <div>
-            <RaisedButton label="Connection" primary={true} style={style} type="submit"/>
+            <RaisedButton label="Connection" primary style={style} type="submit" />
           </div>
         </form>
-        <register/>
+        <register />
       </div>
     );
   }

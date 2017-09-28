@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
 import cookie from 'react-cookies';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
+import * as actions from '../actions';
 // import RaisedButton from 'material-ui/RaisedButton';
 
 class Dashboard extends Component {
@@ -11,11 +11,11 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.props.protectedTest();
-    this.state = {user: jwtDecode(cookie.load('token', true))._doc}
+    this.state = { user: jwtDecode(cookie.load('token', true))._doc }
   }
 
   renderContent() {
-    if(this.props.content) {
+    if (this.props.content) {
       return (
         <p>{this.props.content}</p>
       );

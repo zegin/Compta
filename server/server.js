@@ -198,12 +198,7 @@ apiRoutes.get('/protected', function(req, res) {
 
  */
 
-// route to return all users (GET http://localhost:8080/api/users)
-apiRoutes.get('/users', function(req, res) {
-  User.find({}, function(err, users) {
-    res.json(users);
-  });
-});
+
 
 /**
  * @api {post} /api/configure Configure
@@ -271,7 +266,7 @@ apiRoutes.post('/configure', function(req, res) {
  */
 
 // route middleware to verify a token
-apiRoutes.use(function(req, res, next) {
+app.use('/api/auth/', function(req, res, next) {
 
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -302,10 +297,22 @@ apiRoutes.use(function(req, res, next) {
 });
 
 
+// AUTH ROUTES -------------------
+//
+// get an instance of the router for routes who need authentication
+var authRoutes = express.Router();
+
+// route to return all users (GET http://localhost:8080/api/users)
+authRoutes.get('/users', function(req, res) {
+  User.find({}, function(err, users) {
+    res.json(users);
+  });
+});
 
 
 
 // apply the routes to our application with the prefix /api
+apiRoutes.use('/auth', authRoutes)
 app.use('/api', apiRoutes);
 
 // =======================

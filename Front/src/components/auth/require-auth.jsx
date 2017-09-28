@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-export default function(ComposedComponent) {
+export default function (ComposedComponent) {
   class Authentication extends Component {
     static contextTypes = {
       authenticated: PropTypes.bool,
@@ -10,13 +10,13 @@ export default function(ComposedComponent) {
     }
 
     componentWillMount() {
-      if(!this.props.authenticated) {
+      if (!this.props.authenticated) {
         this.context.router.history.push('/');
       }
     }
 
     componentWillUpdate(nextProps) {
-      if(!nextProps.authenticated) {
+      if (!nextProps.authenticated) {
         this.context.router.history.push('/');
       }
     }

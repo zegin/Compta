@@ -4,9 +4,6 @@ import PropTypes from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 
 export default class Connection extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   connect(bool) {
     this.props.handleConnection(bool)
   }
@@ -14,7 +11,7 @@ export default class Connection extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
-          <RaisedButton label="Connection" primary={true} onClick={()=>{this.connect(true)}}/>
+          <RaisedButton label="Connection" primary onClick={() => { this.connect(true) }} />
           <h2>Connection</h2>
         </div>
       </MuiThemeProvider>
