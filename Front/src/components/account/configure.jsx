@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { configureUser } from '../../actions';
 import PropTypes from 'prop-types';
 import cookie from 'react-cookies';
 import jwtDecode from 'jwt-decode';
@@ -11,32 +10,31 @@ import {
   TextField,
   SelectField
 } from 'redux-form-material-ui'
-import {Doughnut} from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
+import { configureUser } from '../../actions';
 
 const form = reduxForm({
   form: 'configure'
 });
 
-var error = {wage: '', hearth: '', budget: '', select: '', saving: ''}
-var stateHide = {opacity: 0, display: 'none'}
-var doughnut = null;
-
+const error = { wage: '', hearth: '', budget: '', select: '', saving: '' }
+const stateHide = { opacity: 0, display: 'none' }
+let doughnut = null;
 
 
 class Configure extends Component {
   constructor(props) {
     super(props);
-    this.state = {user: jwtDecode(cookie.load('token', true))._doc, value: null, wage: null, budget: null, saving: null, doughnutData: null}
+    this.state = { user: jwtDecode(cookie.load('token', true))._doc, value: null, wage: null, budget: null, saving: null, doughnutData: null }
   }
 
-  handleChange(evt, val){
-    this.setState({value: val}, function(){
-      if(this.state.value === -1){
+  handleChange(evt, val) {
+    this.setState({ value: val }, function () {
+      if (this.state.value === -1) {
         stateHide.display = 'block'
         stateHide.opacity = 1
         this.forceUpdate()
-      }
-      else{
+      } else {
         stateHide.display = 'none'
         stateHide.opacity = 0
         this.forceUpdate()
@@ -45,71 +43,71 @@ class Configure extends Component {
   }
 
   doughnutUpdate() {
-    if(this.state.wage && this.state.budget && this.state.saving){
-      doughnut = <Doughnut data={{
-          labels: [
-            'Budget',
-            'Epargne',
-            'Restant'
-          ],
-          datasets: [{
-            backgroundColor: [
+    if (this.state.wage && this.state.budget && this.state.saving) {
+      doughnut = (<Doughnut data={{
+        labels: [
+          'Budget',
+          'Epargne',
+          'Restant'
+        ],
+        datasets: [{
+          backgroundColor: [
             '#FF6384',
             '#36A2EB',
             '#FFCE56'
-            ],
-            data: [
-              parseInt(this.state.budget),
-              parseInt(this.state.saving),
-              parseInt(this.state.wage) - (parseInt(this.state.budget) + parseInt(this.state.saving))
-            ]
-          }]
-        }} />
+          ],
+          data: [
+            parseInt(this.state.budget, 10),
+            parseInt(this.state.saving, 10),
+            parseInt(this.state.wage, 10) - (parseInt(this.state.budget, 10) + parseInt(this.state.saving, 10))
+          ]
+        }]
+      }}
+      />)
       this.forceUpdate();
     }
   }
 
-  handleWage = (evt, val) => this.setState({wage: val}, () => this.doughnutUpdate())
-  handleBudget = (evt, val) => this.setState({budget: val}, () => this.doughnutUpdate())
-  handleSaving = (evt, val) => this.setState({saving: val}, () => this.doughnutUpdate())
+  handleWage = (evt, val) => this.setState({ wage: val }, () => this.doughnutUpdate())
+  handleBudget = (evt, val) => this.setState({ budget: val }, () => this.doughnutUpdate())
+  handleSaving = (evt, val) => this.setState({ saving: val }, () => this.doughnutUpdate())
 
 
   handleFormSubmit(formProps) {
-    if(this.validate(formProps)){
+    if (this.validate(formProps)) {
       this.props.configureUser(formProps);
     }
   }
 
-  validate(formProps){
-    if(!this.state.value){
-      error.select = "Merci de remplir se champ";
+  validate(formProps) {
+    if (!this.state.value) {
+      error.select = 'Merci de remplir se champ';
     }
-    if(formProps.wage){
-      if(/(\D)/g.test(formProps.wage)){
-        error.wage = "Ne rentrez que des chifres svp"
+    if (formProps.wage) {
+      if (/(\D)/g.test(formProps.wage)) {
+        error.wage = 'Ne rentrez que des chifres svp'
       }
     }
-    if(formProps.budget){
-      if(/(\D)/g.test(formProps.budget)){
-        error.budget = "Ne rentrez que des chifres svp"
+    if (formProps.budget) {
+      if (/(\D)/g.test(formProps.budget)) {
+        error.budget = 'Ne rentrez que des chifres svp'
       }
     }
-    if(formProps.saving){
-      if(/(\D)/g.test(formProps.saving)){
-        error.saving = "Ne rentrez que des chifres svp"
+    if (formProps.saving) {
+      if (/(\D)/g.test(formProps.saving)) {
+        error.saving = 'Ne rentrez que des chifres svp'
       }
     }
-    if(formProps.newHearth){
-      if(!/[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$/g.test(formProps.newHearth)){
-        error.hearth = "Ne rentrez aucun caractère spécial svp"
+    if (formProps.newHearth) {
+      if (!/[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$/g.test(formProps.newHearth)) {
+        error.hearth = 'Ne rentrez aucun caractère spécial svp'
       }
     }
     return true
   }
 
   render() {
-
-    var style = {
+    const style = {
       container: {
         width: '100%',
         display: 'grid',
@@ -155,31 +153,50 @@ class Configure extends Component {
         <p>Pour votre première connection, nous allons configurer votre compte</p>
         <form style={style.container} onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
           <div style={Object.assign({}, style.full, style.row1)}>
-            <Field name="hearth" component={SelectField} floatingLabelText="Dans quel foyez êtes vous ?"
-              onChange={this.handleChange.bind(this)} errorText={error.select}>
-              <MenuItem value="GigiCaro" primaryText="GigiCaro"/>
-              <MenuItem value={-1} primaryText="Aucun"/>
+            <Field
+              name="hearth"
+              component={SelectField}
+              floatingLabelText="Dans quel foyez êtes vous ?"
+              onChange={this.handleChange.bind(this)}
+              errorText={error.select}
+            >
+              <MenuItem value="GigiCaro" primaryText="GigiCaro" />
+              <MenuItem value={-1} primaryText="Aucun" />
             </Field>
           </div>
           <div style={Object.assign({}, style.stateHide, style.row1)}>
-            <Field name="newHearth" component={TextField} type="text" floatingLabelText="Entrez une nouveau foyer" hintText="votre foyer" errorText={error.hearth} required={this.state.value === -1 ? true : false}/>
+            <Field name="newHearth" component={TextField} type="text" floatingLabelText="Entrez une nouveau foyer" hintText="votre foyer" errorText={error.hearth} required={this.state.value === -1} />
           </div>
           <div style={style.doughnut}>
             {doughnut}
           </div>
           <div style={Object.assign({}, style.full, style.row2)}>
-            <Field name="wage" component={TextField} type="text" hintText="Entrez votre salaire net " floatingLabelText="Salaire mensuel" errorText={error.wage} required={true} onChange={this.handleWage.bind(this)}/>
+            <Field name="wage" component={TextField} type="text" hintText="Entrez votre salaire net " floatingLabelText="Salaire mensuel" errorText={error.wage} required onChange={this.handleWage.bind(this)} />
           </div>
           <div style={Object.assign({}, style.full, style.row3)}>
-            <Field name="budget" component={TextField} type="text" hintText="Entrez votre budget" floatingLabelText="Budget mensuel (optionnel)" errorText={error.budget}
-            onChange={this.handleBudget.bind(this)}/>
+            <Field
+              name="budget"
+              component={TextField}
+              type="text"
+              hintText="Entrez votre budget"
+              floatingLabelText="Budget mensuel (optionnel)"
+              errorText={error.budget}
+              onChange={this.handleBudget.bind(this)}
+            />
           </div>
           <div style={style.full}>
-            <Field name="saving" component={TextField} type="text" hintText="Entrez votre epargne" floatingLabelText="Epargne mensuel (optionnel)" errorText={error.saving}
-            onChange={this.handleSaving.bind(this)}/>
+            <Field
+              name="saving"
+              component={TextField}
+              type="text"
+              hintText="Entrez votre epargne"
+              floatingLabelText="Epargne mensuel (optionnel)"
+              errorText={error.saving}
+              onChange={this.handleSaving.bind(this)}
+            />
           </div>
           <div style={Object.assign({}, style.full, style.button)}>
-            <RaisedButton label="Sauvegarder" primary={true} style={style} type="submit"/>
+            <RaisedButton label="Sauvegarder" primary style={style} type="submit" />
           </div>
         </form>
 
@@ -190,11 +207,7 @@ class Configure extends Component {
 
 Configure.propTypes = {
   configureUser: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func,
-  errorMessage: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ])
+  handleSubmit: PropTypes.func
 };
 
 

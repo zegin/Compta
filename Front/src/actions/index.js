@@ -1,13 +1,14 @@
 import axios from 'axios';
 // import { browserHistory } from 'react-router';
 import cookie from 'react-cookies';
+import querystring from 'querystring';
 import {
   AUTH_USER,
   AUTH_ERROR,
   UNAUTH_USER,
   PROTECTED_TEST,
-  CONFIGURED} from './types';
-import querystring from 'querystring';
+  CONFIGURED } from './types';
+
 const API_URL = 'http://localhost:3000/api';
 const CLIENT_ROOT_URL = 'http://localhost:8888';
 
@@ -16,7 +17,7 @@ export function logoutUser() {
     dispatch({ type: UNAUTH_USER });
     cookie.remove('token', { path: '/' });
 
-    window.location.href = CLIENT_ROOT_URL + '/';
+    window.location.href = `${CLIENT_ROOT_URL}/`;
   }
 }
 
@@ -24,39 +25,38 @@ export function logoutUser() {
 export function errorHandler(dispatch, error, type) {
   let errorMessage = '';
 
-  if(error.data.error) {
+  if (error.data.error) {
     errorMessage = error.data.error;
-  } else if(error.data){
+  } else if (error.data) {
     errorMessage = error.data;
   } else {
     errorMessage = error;
   }
 
-  if(error.status === 401) {
+  if (error.status === 401) {
     dispatch({
-      type: type,
+      type,
       payload: 'You are not authorized to do this. Please login and try again.'
     });
     logoutUser();
   } else {
     dispatch({
-      type: type,
+      type,
       payload: errorMessage
     });
   }
 }
 
 export function loginUser({ user, password }) {
-  return function(dispatch) {
+  return function (dispatch) {
     axios.post(`${API_URL}/authenticate`, querystring.stringify({ user, password }))
-    .then(response => {
-      if(response.data.success){
+    .then((response) => {
+      if (response.data.success) {
         cookie.save('token', response.data.token, { path: '/' });
         dispatch({ type: AUTH_USER });
-        window.location.href = CLIENT_ROOT_URL + '/dashboard';
-      }
-      else {
-        console.log("Si pas success")
+        window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
+      } else {
+        console.log('Si pas success')
         console.log(response.data)
         dispatch({
           type: AUTH_ERROR,
@@ -65,7 +65,7 @@ export function loginUser({ user, password }) {
       }
     })
     .catch((error) => {
-      console.log("Si erreur")
+      console.log('Si erreur')
       console.log(error)
       errorHandler(dispatch, error.response, AUTH_ERROR)
     });
@@ -73,12 +73,12 @@ export function loginUser({ user, password }) {
 }
 
 export function registerUser({ name, firstName, lastName, password }) {
-  return function(dispatch) {
+  return function (dispatch) {
     axios.post(`${API_URL}/register`, querystring.stringify({ name, firstName, lastName, password }))
-    .then(response => {
+    .then((response) => {
       cookie.save('token', response.data.token, { path: '/' });
       dispatch({ type: AUTH_USER });
-      window.location.href = CLIENT_ROOT_URL + '/dashboard';
+      window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
     })
     .catch((error) => {
       console.log(error)
@@ -88,7 +88,7 @@ export function registerUser({ name, firstName, lastName, password }) {
 }
 
 export function protectedTest() {
-  return function(dispatch) {
+  return function (dispatch) {
     axios.get(`${API_URL}/protected`, {
       headers: {
         'postman-token': 'c5511295-f8dd-2aa2-71be-4b15de28fa9c',
@@ -96,37 +96,35 @@ export function protectedTest() {
         'x-access-token': cookie.load('token')
       }
     })
-    .then(response => {
-      if(response.data.success){
+    .then((response) => {
+      if (response.data.success) {
         dispatch({
           type: PROTECTED_TEST,
           payload: response.data.content
         });
-      }
-      else{
+      } else {
         cookie.remove('token', { path: '/' });
-        window.location.href = CLIENT_ROOT_URL + '/';
+        window.location.href = `${CLIENT_ROOT_URL}/`;
       }
     })
     .catch((error) => {
-      console.log("protectedTest not passed")
+      console.log('protectedTest not passed')
       errorHandler(dispatch, error.response, AUTH_ERROR)
     });
   }
 }
 
-export function configureUser({hearth, newHearth, wage, budget, saving}) {
-  return function(dispatch) {
-    axios.post(`${API_URL}/configure`, querystring.stringify({token: cookie.load('token'), hearth, newHearth, wage, budget, saving}))
-    .then(response => {
-      if(response.data.success){
+export function configureUser({ hearth, newHearth, wage, budget, saving }) {
+  return function (dispatch) {
+    axios.post(`${API_URL}/configure`, querystring.stringify({ token: cookie.load('token'), hearth, newHearth, wage, budget, saving }))
+    .then((response) => {
+      if (response.data.success) {
         cookie.save('token', response.data.token, { path: '/' });
         dispatch({
           type: CONFIGURED
         });
-        window.location.href = CLIENT_ROOT_URL + '/dashboard';
-      }
-      else{
+        window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
+      } else {
         console.log('pas success');
       }
     })
@@ -134,5 +132,18 @@ export function configureUser({hearth, newHearth, wage, budget, saving}) {
       console.log(error)
       // errorHandler(dispatch, error.response, AUTH_ERROR)
     });
+  }
+}
+
+export function saveExpense({ product, price, repetition, who, date }) {
+  return function () {
+    const timestamp = date.getTime()
+    axios.post(`${API_URL}/auth/saveExpense`, querystring.stringify({ token: cookie.load('token'), product, price, repetition, who, timestamp }))
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 }

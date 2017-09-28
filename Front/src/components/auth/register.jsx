@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
-import { registerUser } from '../../actions';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import { registerUser } from '../../actions';
 
 function validate(formProps) {
   const errors = {};
@@ -34,11 +34,10 @@ const form = reduxForm({
 });
 
 
-
-var errorUser = ""
-var errorLastName = ""
-var errorFirstName = ""
-var errorPassword = ""
+const errorUser = ''
+const errorLastName = ''
+const errorFirstName = ''
+const errorPassword = ''
 
 class Register extends Component {
   handleFormSubmit(formProps) {
@@ -46,7 +45,7 @@ class Register extends Component {
   }
 
   renderAlert() {
-    if(this.props.errorMessage) {
+    if (this.props.errorMessage) {
       return (
         <div>
           <span><strong>Error!</strong> {this.props.errorMessage}</span>
@@ -57,34 +56,34 @@ class Register extends Component {
 
   render() {
     const { handleSubmit } = this.props;
-    const textfield =  ({ input, label, error}) => (
+    const textfield = ({ input, label, error }) => (
       <TextField
         hintText={label}
         floatingLabelText={label}
         {...input}
-        errorText= {error}
+        errorText={error}
       />
     )
     const style = {
-        margin: 12,
-      };
+      margin: 12,
+    };
 
     return (
       <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
         {this.renderAlert()}
         <div>
-          <Field name="lastName" component={textfield} type="text" label="Nom" error={errorLastName}/>
+          <Field name="lastName" component={textfield} type="text" label="Nom" error={errorLastName} />
         </div>
         <div>
-          <Field name="firstName" component={textfield} type="text" label="Prenom" error={errorFirstName}/>
+          <Field name="firstName" component={textfield} type="text" label="Prenom" error={errorFirstName} />
         </div>
         <div>
-          <Field name="name" component={textfield} type="text" label="Nom d'Utilisateur" error={errorUser}/>
+          <Field name="name" component={textfield} type="text" label="Nom d'Utilisateur" error={errorUser} />
         </div>
         <div>
-          <Field name="password" component={textfield} type="password"  label="Mot de passe" error={errorPassword}/>
+          <Field name="password" component={textfield} type="password" label="Mot de passe" error={errorPassword} />
         </div>
-        <RaisedButton label="S'enregistrer" primary={true} style={style} type="submit"/>
+        <RaisedButton label="S'enregistrer" primary style={style} type="submit" />
       </form>
     );
   }

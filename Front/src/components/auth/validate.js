@@ -1,4 +1,4 @@
-export default function(values) {
+export default function (values) {
   const errors = {};
   const requiredFields = [
     'firstName',
@@ -7,7 +7,7 @@ export default function(values) {
     'favoriteColor',
     'notes',
   ];
-  requiredFields.forEach(field => {
+  requiredFields.forEach((field) => {
     if (!values[field]) {
       errors[field] = 'Required';
     }
