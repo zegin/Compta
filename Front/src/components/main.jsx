@@ -9,40 +9,23 @@ import MenuItem from 'material-ui/MenuItem';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import ContentLink from 'material-ui/svg-icons/content/link';
 import ArrowForward from 'material-ui/svg-icons/navigation/arrow-forward';
+import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import TrendingUp from 'material-ui/svg-icons/action/trending-up';
+import TrendingDown from 'material-ui/svg-icons/action/trending-down';
+import MultilineChart from 'material-ui/svg-icons/editor/multiline-chart';
 import Divider from 'material-ui/Divider';
 import ContentCopy from 'material-ui/svg-icons/content/content-copy';
 import Download from 'material-ui/svg-icons/file/file-download';
 import Delete from 'material-ui/svg-icons/action/delete';
 // import FontIcon from 'material-ui/FontIcon';
 import Drawer from 'material-ui/Drawer';
+import Subheader from 'material-ui/Subheader';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 
 
-const style = {
-  container: {
-    display: 'flex', /* crée un contexte flex pour ses enfants */
-    flexDirection: 'column', /* affichage vertical */
-    minHeight: '98vh', /* toute la hauteur du viewport */
-  },
-  wrapper: {
-    flex: '1 1 auto',
-    display: 'flex'
-  },
-  rightIcon: {
-    textAlign: 'center',
-    lineHeight: '24px',
-  },
-  nav: {
-    order: '-1',
-  },
-  contents: {
-    flex: '1',
-    padding: '1em'
-  },
-
-};
 
 class Main extends Component {
-  static logout() {
+  logout() {
     cookie.remove('token')
     window.location.href = 'http://localhost:8888/'
   }
@@ -50,11 +33,55 @@ class Main extends Component {
     super(props);
     this.state = { open: false };
     if (cookie.load('token', false)) { this.state = { user: jwtDecode(cookie.load('token', false)) } }
+
+    console.log(props.muiTheme)
   }
   handleToggle() {
     this.setState({ open: !this.state.open })
   }
   render() {
+    const style = {
+      container: {
+        display: 'flex', /* crée un contexte flex pour ses enfants */
+        flexDirection: 'column', /* affichage vertical */
+        minHeight: '98vh', /* toute la hauteur du viewport */
+      },
+      wrapper: {
+        flex: '1 1 auto',
+        display: 'flex'
+      },
+      rightIcon: {
+        textAlign: 'center',
+        lineHeight: '24px',
+      },
+      nav: {
+        order: '-1',
+      },
+      contents: {
+        flex: '1',
+        padding: '1em'
+      },
+      menuSubHeader: {
+        fontSize: '16px',
+        color: this.props.muiTheme.palette.primary1Color
+      },
+      footer: {
+        padding: '.5rem',
+        color: this.props.muiTheme.palette.textColor,
+        display: 'flex',
+        flexDirection: 'row'
+      },
+      footerLeft: {
+        flex: '1 1 auto',
+        alignSelf: 'flex-start',
+      },
+      footerRight: {
+        flex: '1 1 auto',
+        alignSelf: 'flex-end',
+        textAlign: 'right'
+      }
+    };
+
     return (
       <Paper style={style.container}>
         <AppBar title="Compta" iconClassNameRight="muidocs-icon-navigation-expand-more" onLeftIconButtonTouchTap={() => this.handleToggle()} />
@@ -65,24 +92,28 @@ class Main extends Component {
           </Drawer>
           <Paper style={style.nav}>
             <Menu desktop={false}>
-              <MenuItem primaryText="Dépenses" leftIcon={<ArrowForward />} containerElement={<Link to="/expense" />} />
-              <MenuItem primaryText="Share" leftIcon={<PersonAdd />} />
-              <MenuItem primaryText="Get links" leftIcon={<ContentLink />} />
+              <Subheader style={style.menuSubHeader}>Ajouter</Subheader>
+              <MenuItem primaryText="Débit" leftIcon={<ArrowForward />} containerElement={<Link to="/expense" />} />
+              <MenuItem primaryText="Crédit" leftIcon={<ArrowBack />} />
               <Divider />
-              <MenuItem primaryText="Make a copy" leftIcon={<ContentCopy />} />
-              <MenuItem primaryText="Download" leftIcon={<Download />} />
+              <Subheader style={style.menuSubHeader}>Visualiser</Subheader>
+              <MenuItem primaryText="Débits" leftIcon={<TrendingUp />} containerElement={<Link to="/expenses" />} />
+              <MenuItem primaryText="Crédits" leftIcon={<TrendingDown />} />
+              <MenuItem primaryText="Compte-Rendu" leftIcon={<MultilineChart />} />
               <Divider />
-              <MenuItem primaryText="Remove" leftIcon={<Delete />} />
             </Menu>
           </Paper>
           <div className="content" style={style.contents}>
             {this.props.children}
           </div>
         </div>
-        <p>Footer here</p>
+        <Paper style={style.footer} zDepth={2}>
+          <span style={style.footerLeft}>v0.0.5</span>
+          <span style={style.footerRight} >Par Gilian GONNORD</span>
+        </Paper>
       </Paper>
     );
   }
 }
 
-export default Main;
+export default muiThemeable()(Main);

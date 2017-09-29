@@ -11,6 +11,7 @@ var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
 var User   = require('./app/models/user'); // get our mongoose model
 var Hearth   = require('./app/models/hearth'); // get our mongoose model
+var Expense   = require('./app/models/expense'); // get our mongoose model
 
 // =======================
 // configuration =========
@@ -277,7 +278,7 @@ app.use('/api/auth/', function(req, res, next) {
     // verifies secret and checks exp
     jwt.verify(token, app.get('superSecret'), function(err, decoded) {
       if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
+        return res.json({ success: false, message: err });
       } else {
         // if everything is good, save to request for use in other routes
         req.decoded = decoded;
@@ -309,6 +310,76 @@ authRoutes.get('/users', function(req, res) {
   });
 });
 
+/**
+ * @api {post} /api/auth/saveExpense SaveExpense
+ * @apiName SaveExpense
+ * @apiGroup Api
+ * @apiDescription
+ * Save user expense into database
+ * @apiUse ApiMiddleware
+ * @apiParam {String} token jwt token
+ * @apiParam {String} product Expense product name
+ * @apiParam {String} price Expense product price
+ * @apiParam {String} date Expense product date
+ * @apiParam {String} repetion Expense product repetion
+ * @apiParam {String} user User expense
+ * @apiSuccess (Success) {Boolean} success true
+ * @apiSuccess (Success) {String} token updated jwt token
+ */
+
+// route to confiure a user (POST http://localhost:3000/api/auth/configure)
+authRoutes.post('/saveExpense', function(req, res) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var user = jwt.decode(token);
+  console.log(req.body.date);
+  User.findOne({name: user.name}, function(err, user){
+    var expense = new Expense({
+      name: req.body.product,
+      price: req.body.price,
+      date: req.body.timestamp,
+      repetition: req.body.repetition
+    })
+    user.expenses.push(expense)
+    user.save()
+    expense.save()
+    res.json({
+        success: true,
+        token: token,
+        content : "sauvegarde effectuée"
+      })
+  })
+});
+
+/**
+ * @api {post} /api/auth/getUserExpense getUserExpenses
+ * @apiName SaveExpense
+ * @apiGroup Api
+ * @apiDescription
+ * Get all user expenses
+ * @apiUse ApiMiddleware
+ * @apiParam {String} token jwt token
+ * @apiSuccess (Success) {Boolean} success true
+ * @apiSuccess (Success) {String} token updated jwt token
+ */
+
+
+
+
+// route to confiure a user (POST http://localhost:3000/api/auth/getUserExpenses)
+authRoutes.post('/getUserExpenses', function(req, res) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var username = jwt.decode(token).name;
+  var tokenTest = null;
+  const user = User.findOne({name: username}).populate('expenses').exec((err,val)=>{
+    console.log(jwt.decode(tokenTest));
+    res.json({
+      success: true,
+      token: jwt.sign(val.toObject(), app.get('superSecret'), {
+        expiresInMinutes: 1440 // expires in 24 hours
+      })
+    })
+  })
+});
 
 
 // apply the routes to our application with the prefix /api

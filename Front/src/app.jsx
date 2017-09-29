@@ -18,6 +18,7 @@ import RequireAuth from './components/auth/require-auth';
 import RequireConfig from './components/auth/require-config';
 import Configure from './components/account/configure'
 import Expense from './components/treatment/expense'
+import Expenses from './components/visualisation/expenses'
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 const store = createStoreWithMiddleware(reducers);
@@ -26,7 +27,7 @@ let token = '';
 if (cookie.load('token')) {
   store.dispatch({ type: AUTH_USER });
   token = cookie.load('token');
-  if (jwtDecode(cookie.load('token', true))._doc.wage) {
+  if (jwtDecode(cookie.load('token', true)).wage) {
     store.dispatch({ type: CONFIGURED });
   }
 }
@@ -43,6 +44,8 @@ export default class App extends React.Component {
                 <Route path="/dashboard" component={RequireConfig(Dashboard)} />
                 <Route path="/configure" component={RequireAuth(Configure)} />
                 <Route path="/expense" component={RequireConfig(Expense)} />
+                <Route path="/expenses" component={RequireConfig(Expenses)} />
+                <Route path="/*" component={RequireConfig(Dashboard)} />
               </Switch>
             </Main>
           </Router>

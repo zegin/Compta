@@ -21,6 +21,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "chart.js": "^2.7.0",
     "cookie": "^0.3.1",
+    "glamor": "^2.20.40",
     "intl": "^1.2.5",
     "intl-locales-supported": "^1.0.0",
     "jwt-decode": "^2.2.0",

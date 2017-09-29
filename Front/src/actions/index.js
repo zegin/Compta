@@ -7,7 +7,8 @@ import {
   AUTH_ERROR,
   UNAUTH_USER,
   PROTECTED_TEST,
-  CONFIGURED } from './types';
+  CONFIGURED,
+  PASSED} from './types';
 
 const API_URL = 'http://localhost:3000/api';
 const CLIENT_ROOT_URL = 'http://localhost:8888';
@@ -136,14 +137,34 @@ export function configureUser({ hearth, newHearth, wage, budget, saving }) {
 }
 
 export function saveExpense({ product, price, repetition, who, date }) {
-  return function () {
+  return function (dispatch) {
     const timestamp = date.getTime()
     axios.post(`${API_URL}/auth/saveExpense`, querystring.stringify({ token: cookie.load('token'), product, price, repetition, who, timestamp }))
     .then((response) => {
-      console.log(response)
+      cookie.save('token', response.data.token, { path: '/' });
+      dispatch({
+        type: PASSED,
+        payload: response.data.message
+      })
     })
     .catch((error) => {
-      console.log(error);
+      console.log(error)
+    })
+  }
+}
+
+export function getUserExpenses() {
+  return function (dispatch) {
+    axios.post(`${API_URL}/auth/getUserExpenses`, querystring.stringify({ token: cookie.load('token')}))
+    .then((response) => {
+      cookie.save('token', response.data.token, { path: '/' });
+      dispatch({
+        type: PASSED,
+        payload: response.data.message
+      })
+    })
+    .catch((error) => {
+      console.log(error)
     })
   }
 }
