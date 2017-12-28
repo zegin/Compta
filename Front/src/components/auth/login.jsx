@@ -56,7 +56,6 @@ class Login extends Component {
             <RaisedButton label="Connection" primary style={style} type="submit" />
           </div>
         </form>
-        <register />
       </div>
     );
   }

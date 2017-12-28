@@ -53,6 +53,7 @@ export function loginUser({ user, password }) {
     axios.post(`${API_URL}/authenticate`, querystring.stringify({ user, password }))
     .then((response) => {
       if (response.data.success) {
+        console.log('si succes')
         cookie.save('token', response.data.token, { path: '/' });
         dispatch({ type: AUTH_USER });
         window.location.href = `${CLIENT_ROOT_URL}/dashboard`;
@@ -119,6 +120,7 @@ export function configureUser({ hearth, newHearth, wage, budget, saving }) {
   return function (dispatch) {
     axios.post(`${API_URL}/configure`, querystring.stringify({ token: cookie.load('token'), hearth, newHearth, wage, budget, saving }))
     .then((response) => {
+      console.log(response);
       if (response.data.success) {
         cookie.save('token', response.data.token, { path: '/' });
         dispatch({

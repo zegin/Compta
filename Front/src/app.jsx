@@ -27,7 +27,7 @@ let token = '';
 if (cookie.load('token')) {
   store.dispatch({ type: AUTH_USER });
   token = cookie.load('token');
-  if (jwtDecode(cookie.load('token', true)).wage) {
+  if (jwtDecode(cookie.load('token', true))._doc.wage) {
     store.dispatch({ type: CONFIGURED });
   }
 }
