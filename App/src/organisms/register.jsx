@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import axios from 'axios';
-import querystring from 'querystring'
-import cookie from 'react-cookies';
-import jwt from 'jsonwebtoken';
+import { CreateUser } from '../actions/action'
 
 class Register extends Component {
   constructor(props) {
@@ -41,27 +38,7 @@ class Register extends Component {
     if (!firstName || !lastName || !user || !password) {
       return
     }
-    this.createUser(firstName, lastName, user, password)
-  }
-
-  createUser = (firstName, lastName, user, password) => {
-    axios.post('http://localhost:3000/api/register', querystring.stringify({
-      firstName, lastName, user, password
-    }))
-      .then((response) => {
-        if (response.data.success) {
-          cookie.save('token', jwt.decode(response.data.token), { path: '/' });
-          this.props.handleConnection()
-        } else {
-          this.setState({
-            errorUser: response.data.type === 'user' ? response.data.message : '',
-            errorPassword: response.data.type === 'password' ? response.data.message : ''
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      });
+    CreateUser(firstName, lastName, user, password, this.props.handleConnection)
   }
 
   render() {

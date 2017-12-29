@@ -1,24 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import cookie from 'react-cookies';
-// import jwtDecode from 'jwt-decode';
-// import { Link } from 'react-router-dom'
 import AppBar from 'material-ui/AppBar';
 import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-// import PersonAdd from 'material-ui/svg-icons/social/person-add';
-// import ContentLink from 'material-ui/svg-icons/content/link';
 import ArrowForward from 'material-ui/svg-icons/navigation/arrow-forward';
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import TrendingUp from 'material-ui/svg-icons/action/trending-up';
 import TrendingDown from 'material-ui/svg-icons/action/trending-down';
 import MultilineChart from 'material-ui/svg-icons/editor/multiline-chart';
 import Divider from 'material-ui/Divider';
-// import ContentCopy from 'material-ui/svg-icons/content/content-copy';
-// import Download from 'material-ui/svg-icons/file/file-download';
-// import Delete from 'material-ui/svg-icons/action/delete';
-// import FontIcon from 'material-ui/FontIcon';
 import Drawer from 'material-ui/Drawer';
 import Subheader from 'material-ui/Subheader';
 import muiThemeable from 'material-ui/styles/muiThemeable';
@@ -40,7 +31,7 @@ class Main extends Component {
       container: {
         display: 'flex', /* crée un contexte flex pour ses enfants */
         flexDirection: 'column', /* affichage vertical */
-        minHeight: '98vh', /* toute la hauteur du viewport */
+        minHeight: 'calc(100vh - 34px)', /* toute la hauteur du viewport */
       },
       wrapper: {
         flex: '1 1 auto',
@@ -89,13 +80,13 @@ class Main extends Component {
           <Paper style={style.nav}>
             <Menu desktop={false}>
               <Subheader style={style.menuSubHeader}>Ajouter</Subheader>
-              <MenuItem primaryText="Débit" leftIcon={<ArrowForward />} />
-              <MenuItem primaryText="Crédit" leftIcon={<ArrowBack />} />
+              <MenuItem primaryText="Débit" leftIcon={<ArrowForward />} disabled={!this.props.hearth} />
+              <MenuItem primaryText="Crédit" leftIcon={<ArrowBack />} disabled={!this.props.hearth} />
               <Divider />
               <Subheader style={style.menuSubHeader}>Visualiser</Subheader>
-              <MenuItem primaryText="Débits" leftIcon={<TrendingUp />} />
-              <MenuItem primaryText="Crédits" leftIcon={<TrendingDown />} />
-              <MenuItem primaryText="Compte-Rendu" leftIcon={<MultilineChart />} />
+              <MenuItem primaryText="Débits" leftIcon={<TrendingUp />} disabled={!this.props.hearth} />
+              <MenuItem primaryText="Crédits" leftIcon={<TrendingDown />} disabled={!this.props.hearth} />
+              <MenuItem primaryText="Compte-Rendu" leftIcon={<MultilineChart />} disabled={!this.props.hearth} />
               <Divider />
             </Menu>
           </Paper>
@@ -118,7 +109,8 @@ Main.propTypes = {
       primary1Color: PropTypes.string,
       textColor: PropTypes.string
     })
-  })
+  }),
+  hearth: PropTypes.bool
 };
 
 export default muiThemeable()(Main);

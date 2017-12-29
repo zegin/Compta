@@ -5,6 +5,7 @@ import cookie from 'react-cookies';
 import Main from './organisms/main'
 import Auth from './templates/auth';
 import Dashboard from './templates/dashboard';
+import Hearth from './templates/hearth';
 
 let token = 0;
 
@@ -25,20 +26,25 @@ export default class App extends React.Component {
       connected: true
     }, this.forceUpdate())
   }
+  handleHearth= () => {
+    this.setState({
+      hearth: true
+    }, this.forceUpdate())
+  }
   render() {
     let content = 0;
     if (this.state.connected) {
       if (this.state.hearth) {
         content = <Dashboard />
       } else {
-        content = <h1>HEARTH</h1>
+        content = <Hearth handleHearth={() => this.handleHearth()} token={token} />
       }
     } else {
       content = <Auth handleConnection={() => this.handleConnection()} />
     }
     return (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <Main>
+        <Main hearth={this.state.hearth}>
           {content}
         </Main>
       </MuiThemeProvider>

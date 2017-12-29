@@ -124,6 +124,9 @@ apiRoutes.post('/authenticate', function(req, res) {
  * @apiParam {String} lastName User last name
  * @apiParam {String} name User name
  * @apiParam {String} password User password
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} message L\'utilisateur existe déjà
+ * @apiError (Error) {String} type user
  * @apiSuccess (Success) {Boolean} success true
  * @apiSuccess (Success) {String} message Enjoy your token!
  * @apiSuccess (Success) {String} token jwt token
@@ -190,85 +193,47 @@ apiRoutes.get('/protected', function(req, res) {
 });
 
 /**
- * @api {get} /api/users Users
- * @apiName Users
+ * @api {post} /api/createHearth Create Hearth
+ * @apiName Create Hearth
  * @apiGroup Api
  * @apiDescription
- * return all users
- * @apiUse ApiMiddleware
- * @apiSuccess (Success) {String} json list
- * @apiSuccessExample {json} Success response example:
- *  HTTP/1.1 200 OK
- *    [
- *      {
- *       "_id" : "333abb54efa86c",
- *       "firstName": "John",
- *       "lastName": "Doe",
- *       "name" : "Jdoe",
- *       "password" : "azerty"
- *      }
- *    ]
-
- */
-
-
-
-/**
- * @api {post} /api/configure Configure
- * @apiName Configure
- * @apiGroup Api
- * @apiDescription
- * Save user configuration into database
+ * Create a hearth and bind it to the user
  * @apiUse ApiMiddleware
  * @apiParam {String} token jwt token
- * @apiParam {String} heart User heart name
- * @apiParam {String} wage User wage
- * @apiParam {String} budget User budget
- * @apiParam {String} saving User saving
+ * @apiParam {String} heart Heart name
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} content Information manquantante.
  * @apiSuccess (Success) {Boolean} success true
  * @apiSuccess (Success) {String} token updated jwt token
+ * @apiSuccess (Success) {String} content Foyer créé
  */
 
-// route to confiure a user (POST http://localhost:3000/api/configure)
-apiRoutes.post('/configure', function(req, res) {
+// route to confiure a user (POST http://localhost:3000/api/createHearth)
+apiRoutes.post('/createHearth', function(req, res) {
 
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  var nick = jwt.decode(token)._doc
-  User.findOne({name : nick.name}, function(err,user){
-    if(err){res.send(err)}
-    else{
-      if(req.body.wage){
-        user.wage = req.body.wage
-        user.markModified('wage')
-      }
-      if(req.body.budget){
-        user.budget = req.body.budget
-        user.markModified('budget')
-      }
-      if(req.body.saving){
-        user.saving = req.body.saving
-        user.markModified('saving')
-      }
-      if(req.body.hearth){
-        console.log(req.body.hearth);
-        Hearth.findOne({name: req.body.hearth},function(err,hearth){
-          console.log(hearth)
-          hearth.users.push(user)
-          hearth.save()
-          console.log(hearth);
+  let {token, hearth} = req.body
+  let user = jwt.decode(token)
+
+  if(!user.name || !hearth){
+    return res.json({ success: false, content: 'Information manquantante.' });
+  }
+
+  User.findById(user._id, (e, findUser) => {
+    let newHearth = new Hearth({
+      name: hearth
+    })
+    newHearth.addUser(findUser, () => {
+      newHearth.save(() => {
+        token = jwt.sign(findUser.toObject(), app.get('superSecret'), {
+          expiresInMinutes: 1440 // expires in 24 hours
         })
-      }
-      user.save(()=>{
-        token = jwt.sign(user, app.get('superSecret'), {
-            expiresInMinutes: 1440 // expires in 24 hours
-          })
         res.json({
-            success: true,
-            token: token,
-            content : "user configured"
-          })
+          success: true,
+          token: token,
+          content : "Foyer créé !"
+        })
       })
-    }
+    })
   })
 });
 

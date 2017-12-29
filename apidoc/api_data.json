@@ -1,4 +1,4 @@
-define({ "api": [
+[
   {
     "type": "get",
     "url": "/api/authenticate",
@@ -120,16 +120,16 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "server/server.js",
     "groupTitle": "Api"
   },
   {
     "type": "post",
-    "url": "/api/configure",
-    "title": "Configure",
-    "name": "Configure",
+    "url": "/api/createHearth",
+    "title": "Create Hearth",
+    "name": "Create_Hearth",
     "group": "Api",
-    "description": "<p>Save user configuration into database</p>",
+    "description": "<p>Create a hearth and bind it to the user</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -145,28 +145,43 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "heart",
-            "description": "<p>User heart name</p>"
+            "description": "<p>Heart name</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error": [
+          {
+            "group": "Error",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
           },
           {
-            "group": "Parameter",
+            "group": "Error",
             "type": "String",
             "optional": false,
-            "field": "wage",
-            "description": "<p>User wage</p>"
+            "field": "content",
+            "description": "<p>Information manquantante.</p>"
+          }
+        ],
+        "Error 403": [
+          {
+            "group": "Error 403",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
           },
           {
-            "group": "Parameter",
+            "group": "Error 403",
             "type": "String",
             "optional": false,
-            "field": "budget",
-            "description": "<p>User budget</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "saving",
-            "description": "<p>User saving</p>"
+            "field": "message",
+            "description": "<p>No token provided.</p>"
           }
         ]
       }
@@ -187,33 +202,20 @@ define({ "api": [
             "optional": false,
             "field": "token",
             "description": "<p>updated jwt token</p>"
+          },
+          {
+            "group": "Success",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Foyer créé</p>"
           }
         ]
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
-    "groupTitle": "Api",
-    "error": {
-      "fields": {
-        "Error 403": [
-          {
-            "group": "Error 403",
-            "type": "Boolean",
-            "optional": false,
-            "field": "success",
-            "description": "<p>false</p>"
-          },
-          {
-            "group": "Error 403",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>No token provided.</p>"
-          }
-        ]
-      }
-    }
+    "filename": "server/server.js",
+    "groupTitle": "Api"
   },
   {
     "type": "get",
@@ -292,7 +294,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "server/server.js",
     "groupTitle": "Api"
   },
   {
@@ -336,6 +338,49 @@ define({ "api": [
         ]
       }
     },
+    "error": {
+      "fields": {
+        "Error": [
+          {
+            "group": "Error",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>L'utilisateur existe déjà</p>"
+          },
+          {
+            "group": "Error",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>user</p>"
+          }
+        ],
+        "Error 403": [
+          {
+            "group": "Error 403",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error 403",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>No token provided.</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success": [
@@ -364,28 +409,8 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
-    "groupTitle": "Api",
-    "error": {
-      "fields": {
-        "Error 403": [
-          {
-            "group": "Error 403",
-            "type": "Boolean",
-            "optional": false,
-            "field": "success",
-            "description": "<p>false</p>"
-          },
-          {
-            "group": "Error 403",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>No token provided.</p>"
-          }
-        ]
-      }
-    }
+    "filename": "server/server.js",
+    "groupTitle": "Api"
   },
   {
     "type": "post",
@@ -463,7 +488,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "server/server.js",
     "groupTitle": "Api",
     "error": {
       "fields": {
@@ -487,34 +512,47 @@ define({ "api": [
     }
   },
   {
-    "type": "get",
-    "url": "/api/users",
-    "title": "Users",
-    "name": "Users",
+    "type": "post",
+    "url": "/api/auth/getUserExpense",
+    "title": "getUserExpenses",
+    "name": "SaveExpense",
     "group": "Api",
-    "description": "<p>return all users</p>",
+    "description": "<p>Get all user expenses</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>jwt token</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success": [
           {
             "group": "Success",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true</p>"
+          },
+          {
+            "group": "Success",
             "type": "String",
             "optional": false,
-            "field": "json",
-            "description": "<p>list</p>"
+            "field": "token",
+            "description": "<p>updated jwt token</p>"
           }
         ]
-      },
-      "examples": [
-        {
-          "title": "Success response example:",
-          "content": "HTTP/1.1 200 OK\n  [\n    {\n     \"_id\" : \"333abb54efa86c\",\n     \"firstName\": \"John\",\n     \"lastName\": \"Doe\",\n     \"name\" : \"Jdoe\",\n     \"password\" : \"azerty\"\n    }\n  ]",
-          "type": "json"
-        }
-      ]
+      }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "server/server.js",
     "groupTitle": "Api",
     "error": {
       "fields": {
@@ -557,7 +595,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "server/server.js",
     "groupTitle": "Global"
   }
-] });
+]
