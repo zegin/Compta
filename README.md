@@ -46,5 +46,5 @@
 
 ## TO-DO
  - [x] configuration form
- - [ ] configuration validaton
- - [ ] configuration data persistence
+ - [x] configuration validaton
+ - [x] configuration data persistence
