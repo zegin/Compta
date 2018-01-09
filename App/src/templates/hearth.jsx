@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import { CreateHearth } from '../actions/action'
+import { CreateHearth, LinkHearth } from '../actions/action'
 
 const style = {
   container: {
@@ -48,7 +48,33 @@ class Hearth extends Component {
   }
 
   handleNewHearth = () => {
-    CreateHearth(this.state.newHearth, this.props.handleHearth)
+    this.setState({
+      errorNewHearth: this.state.newHearth ? '' : 'Veuillez saisir votre nouveau foyer'
+    });
+    if (this.state.newHearth) {
+      CreateHearth(this.state.newHearth, this.props.handleHearth)
+    }
+  }
+
+  handleLinkHearth = () => {
+    this.setState({
+      errorLinkHearth: this.state.linkHearth ? '' : 'Veuillez saisir le nom du foyer'
+    });
+    if (this.state.linkHearth) {
+      try {
+        LinkHearth(this.state.linkHearth, this.props.handleHearth, (err) => {
+          this.setState({
+            errorLinkHearth: err
+          });
+        })
+      } catch (e) {
+        console.log('error');
+        console.log(e);
+        this.setState({
+          errorLinkHearth: e.name
+        });
+      }
+    }
   }
 
   render() {
@@ -90,8 +116,8 @@ class Hearth extends Component {
 }
 
 Hearth.propTypes = {
-  // handleHearth: PropTypes.func.isRequired,
-  token: PropTypes.shape({})
+  token: PropTypes.number,
+  handleHearth: PropTypes.func
 };
 
 export default Hearth;

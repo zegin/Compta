@@ -79,38 +79,30 @@ var apiRoutes = express.Router();
 
 // route to authenticate a user (POST http://localhost:3000/api/authenticate)
 apiRoutes.post('/authenticate', function(req, res) {
-  // find the user
-  User.findOne({
-    name: req.body.user
-  }, function(err, user) {
-
-    if (err) throw err;
-
-    if (!user) {
-      res.json({ success: false, message: 'Utilisateur introuvable', type: 'user' });
-    } else if (user) {
-
-      // check if password matches
-      if (user.password != req.body.password) {
-        res.json({ success: false, message: 'Mauvais mot de passe', type: 'password'});
-      } else {
-
-        // if user is found and password is right
-        // create a token
-        var token = jwt.sign(user.toObject(), app.get('superSecret'), {
-          expiresInMinutes: 1440 // expires in 24 hours
-        });
-        // return the information including token as JSON
-        res.json({
-          success: true,
-          message: 'Enjoy your token!',
-          token: token
-        });
+  User.
+    findOne({name: req.body.user}).
+    populate('hearth').
+    exec(function (err, user) {
+      if (err) throw err;
+      if (!user) {
+        res.json({ success: false, message: 'Utilisateur introuvable', type: 'user' });
       }
-
-    }
-
-  });
+      else {
+        if (user.password != req.body.password) {
+          res.json({ success: false, message: 'Mauvais mot de passe', type: 'password'});
+        }
+        else {
+          var token = jwt.sign(user.toObject(), app.get('superSecret'), {
+            expiresInMinutes: 1440 // expires in 24 hours
+          });
+          res.json({
+            success: true,
+            message: 'Enjoy your token!',
+            token: token
+          });
+        }
+      }
+    });
 });
 
 /**
@@ -193,20 +185,20 @@ apiRoutes.get('/protected', function(req, res) {
 });
 
 /**
- * @api {post} /api/createHearth Create Hearth
- * @apiName Create Hearth
- * @apiGroup Api
- * @apiDescription
- * Create a hearth and bind it to the user
- * @apiUse ApiMiddleware
- * @apiParam {String} token jwt token
- * @apiParam {String} heart Heart name
- * @apiError (Error) {Boolean} success false
- * @apiError (Error) {String} content Information manquantante.
- * @apiSuccess (Success) {Boolean} success true
- * @apiSuccess (Success) {String} token updated jwt token
- * @apiSuccess (Success) {String} content Foyer créé
- */
+* @api {post} /api/createHearth Create Hearth
+* @apiName Create Hearth
+* @apiGroup Api
+* @apiDescription
+* Create a hearth and bind it to the user
+* @apiUse ApiMiddleware
+* @apiParam {String} token jwt token
+* @apiParam {String} heart Heart name
+* @apiError (Error) {Boolean} success false
+* @apiError (Error) {String} content Information manquantante.
+* @apiSuccess (Success) {Boolean} success true
+* @apiSuccess (Success) {String} token updated jwt token
+* @apiSuccess (Success) {String} content Foyer créé
+*/
 
 // route to confiure a user (POST http://localhost:3000/api/createHearth)
 apiRoutes.post('/createHearth', function(req, res) {
@@ -235,6 +227,54 @@ apiRoutes.post('/createHearth', function(req, res) {
       })
     })
   })
+});
+
+/**
+ * @api {post} /api/linkHearth Link Hearth
+ * @apiName Link Hearth
+ * @apiGroup Api
+ * @apiDescription
+ * Link user to a existant hearth
+ * @apiUse ApiMiddleware
+ * @apiParam {String} token jwt token
+ * @apiParam {String} heart Heart name
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} content Information manquantante.
+ * @apiError (ErrorFind) {Boolean} success false
+ * @apiError (ErrorFind) {String} content Foyer introuvable.
+ * @apiSuccess (Success) {Boolean} success true
+ * @apiSuccess (Success) {String} token updated jwt token
+ * @apiSuccess (Success) {String} content Utilisateur attaché
+ */
+
+// route to confiure a user (POST http://localhost:3000/api/linkHearth)
+apiRoutes.post('/linkHearth', function(req, res) {
+
+  let {token, hearth} = req.body
+  let user = jwt.decode(token)
+
+  if(!user.name || !hearth){
+    return res.json({ success: false, content: 'Information manquantante.' });
+  }
+
+  User.findOne({name: user.name}, (err, findUser) => {
+    Hearth.findOne({name: hearth}, (e,findHearth) => {
+      if(!findHearth){
+        return res.json({ success: false, content: 'Foyer introuvable' });
+      }
+      console.log(findHearth);
+      findHearth.addUser(findUser, () => {
+        token = jwt.sign(findUser.toObject(), app.get('superSecret'), {
+          expiresInMinutes: 1440 // expires in 24 hours
+        })
+        res.json({
+          success: true,
+          token: token,
+          content : "Foyer créé !"
+        })
+      })
+    })
+  });
 });
 
 /**

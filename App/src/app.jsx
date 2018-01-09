@@ -11,6 +11,7 @@ let token = 0;
 
 if (cookie.load('token')) {
   token = cookie.load('token')
+  console.log(token);
 }
 
 export default class App extends React.Component {
@@ -23,7 +24,8 @@ export default class App extends React.Component {
   }
   handleConnection = () => {
     this.setState({
-      connected: true
+      connected: true,
+      hearth: !!cookie.load('token').hearth
     }, this.forceUpdate())
   }
   handleHearth= () => {
@@ -35,7 +37,7 @@ export default class App extends React.Component {
     let content = 0;
     if (this.state.connected) {
       if (this.state.hearth) {
-        content = <Dashboard />
+        content = <Dashboard token={token} />
       } else {
         content = <Hearth handleHearth={() => this.handleHearth()} token={token} />
       }

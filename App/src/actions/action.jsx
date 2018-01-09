@@ -42,12 +42,29 @@ export function LoginUser(user, password, callback) {
 }
 
 export function CreateHearth(hearth, callback) {
-  let token = jwt.sign(cookie.load('token'),'superSecret')
+  const token = jwt.sign(cookie.load('token'), 'superSecret')
   axios.post('http://localhost:3000/api/createHearth', querystring.stringify({ token, hearth }))
     .then((response) => {
       console.log(response);
       cookie.save('token', jwt.decode(response.data.token), { path: '/' });
       callback()
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+}
+
+export function LinkHearth(hearth, callback, errHandler) {
+  const token = jwt.sign(cookie.load('token'), 'superSecret')
+
+  axios.post('http://localhost:3000/api/linkHearth', querystring.stringify({ token, hearth }))
+    .then((response) => {
+      if (!response.data.success) {
+        errHandler(response.data.content)
+      } else {
+        cookie.save('token', jwt.decode(response.data.token), { path: '/' });
+        callback()
+      }
     })
     .catch((error) => {
       console.log(error)

@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 // import cookie from 'react-cookies';
 // import PropTypes from 'prop-types';
 // import { css } from 'glamor'
+//
 
 class Dashboard extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    this.state = props.token;
+  }
 
   // renderContent() {
   //   if (this.props.content) {
@@ -53,5 +57,9 @@ class Dashboard extends Component {
     );
   }
 }
+
+Dashboard.propTypes = {
+  token: PropTypes.shape({})
+};
 
 export default Dashboard
