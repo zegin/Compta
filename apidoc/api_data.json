@@ -218,6 +218,116 @@
     "groupTitle": "Api"
   },
   {
+    "type": "post",
+    "url": "/api/linkHearth",
+    "title": "Link Hearth",
+    "name": "Link_Hearth",
+    "group": "Api",
+    "description": "<p>Link user to a existant hearth</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>jwt token</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "heart",
+            "description": "<p>Heart name</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error": [
+          {
+            "group": "Error",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Information manquantante.</p>"
+          }
+        ],
+        "ErrorFind": [
+          {
+            "group": "ErrorFind",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "ErrorFind",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Foyer introuvable.</p>"
+          }
+        ],
+        "Error 403": [
+          {
+            "group": "Error 403",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error 403",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>No token provided.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success": [
+          {
+            "group": "Success",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true</p>"
+          },
+          {
+            "group": "Success",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>updated jwt token</p>"
+          },
+          {
+            "group": "Success",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Utilisateur attaché</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "server/server.js",
+    "groupTitle": "Api"
+  },
+  {
     "type": "get",
     "url": "/api/protected",
     "title": "Protected",
