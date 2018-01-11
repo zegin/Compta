@@ -16,7 +16,7 @@
 
 ### Start App
   ```bash
-    cd ..
+    cd app
     npm i
     npm run dev
   ```
@@ -45,6 +45,6 @@
       ```
 
 ## TO-DO
- - [x] configuration form
- - [x] configuration validaton
- - [x] configuration data persistence
+ - [x] create hearth
+ - [ ] join hearth
+ - [ ] hash password

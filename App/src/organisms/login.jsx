@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import querystring from 'querystring'
-import cookie from 'react-cookies';
-import jwt from 'jsonwebtoken';
+import { LoginUser } from '../actions/action'
 
 class Login extends Component {
   constructor(props) {
@@ -33,25 +30,7 @@ class Login extends Component {
     if (!user || !password) {
       return
     }
-    this.loginUser(user, password)
-  }
-
-  loginUser = (user, password) => {
-    axios.post('http://localhost:3000/api/authenticate', querystring.stringify({ user, password }))
-      .then((response) => {
-        if (response.data.success) {
-          cookie.save('token', jwt.decode(response.data.token), { path: '/' });
-          this.props.handleConnection()
-        } else {
-          this.setState({
-            errorUser: response.data.type === 'user' ? response.data.message : '',
-            errorPassword: response.data.type === 'password' ? response.data.message : ''
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      });
+    LoginUser(user, password, this.props.handleConnection)
   }
 
   render() {

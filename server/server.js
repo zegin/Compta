@@ -9,6 +9,7 @@ var mongoose    = require('mongoose');
 var cors        = require('cors')
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
+var qs = require('qs');
 // var { User }   = require('./app/models'); // get our mongoose model
 // var Hearth   = require('./app/models'); // get our mongoose model
 // var Expense   = require('./app/models'); // get our mongoose model
@@ -20,6 +21,7 @@ var User = Models.user;
 var Expense = Models.expense;
 var Saving = Models.saving;
 var Budget = Models.budget;
+var Resource = Models.resource;
 
 // =======================
 // configuration =========
@@ -79,38 +81,36 @@ var apiRoutes = express.Router();
 
 // route to authenticate a user (POST http://localhost:3000/api/authenticate)
 apiRoutes.post('/authenticate', function(req, res) {
-  // find the user
-  User.findOne({
-    name: req.body.user
-  }, function(err, user) {
-
-    if (err) throw err;
-
-    if (!user) {
-      res.json({ success: false, message: 'Utilisateur introuvable', type: 'user' });
-    } else if (user) {
-
-      // check if password matches
-      if (user.password != req.body.password) {
-        res.json({ success: false, message: 'Mauvais mot de passe', type: 'password'});
-      } else {
-
-        // if user is found and password is right
-        // create a token
-        var token = jwt.sign(user.toObject(), app.get('superSecret'), {
-          expiresInMinutes: 1440 // expires in 24 hours
-        });
-        // return the information including token as JSON
-        res.json({
-          success: true,
-          message: 'Enjoy your token!',
-          token: token
-        });
+  User.
+    findOne({name: req.body.user}).
+    populate({
+      path: 'hearth',
+      populate: {
+        path: 'resources',
+        model: 'Resource'
       }
-
-    }
-
-  });
+    }).
+    exec(function (err, user) {
+      if (err) throw err;
+      if (!user) {
+        res.json({ success: false, message: 'Utilisateur introuvable', type: 'user' });
+      }
+      else {
+        if (user.password != req.body.password) {
+          res.json({ success: false, message: 'Mauvais mot de passe', type: 'password'});
+        }
+        else {
+          var token = jwt.sign(user.toObject(), app.get('superSecret'), {
+            expiresInMinutes: 1440 // expires in 24 hours
+          });
+          res.json({
+            success: true,
+            message: 'Enjoy your token!',
+            token: token
+          });
+        }
+      }
+    });
 });
 
 /**
@@ -124,6 +124,9 @@ apiRoutes.post('/authenticate', function(req, res) {
  * @apiParam {String} lastName User last name
  * @apiParam {String} name User name
  * @apiParam {String} password User password
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} message L\'utilisateur existe déjà
+ * @apiError (Error) {String} type user
  * @apiSuccess (Success) {Boolean} success true
  * @apiSuccess (Success) {String} message Enjoy your token!
  * @apiSuccess (Success) {String} token jwt token
@@ -190,86 +193,160 @@ apiRoutes.get('/protected', function(req, res) {
 });
 
 /**
- * @api {get} /api/users Users
- * @apiName Users
- * @apiGroup Api
- * @apiDescription
- * return all users
- * @apiUse ApiMiddleware
- * @apiSuccess (Success) {String} json list
- * @apiSuccessExample {json} Success response example:
- *  HTTP/1.1 200 OK
- *    [
- *      {
- *       "_id" : "333abb54efa86c",
- *       "firstName": "John",
- *       "lastName": "Doe",
- *       "name" : "Jdoe",
- *       "password" : "azerty"
- *      }
- *    ]
+* @api {post} /api/createHearth Create Hearth
+* @apiName Create Hearth
+* @apiGroup Api
+* @apiDescription
+* Create a hearth and bind it to the user
+* @apiUse ApiMiddleware
+* @apiParam {String} token jwt token
+* @apiParam {String} heart Heart name
+* @apiError (Error) {Boolean} success false
+* @apiError (Error) {String} content Information manquantante.
+* @apiSuccess (Success) {Boolean} success true
+* @apiSuccess (Success) {String} token updated jwt token
+* @apiSuccess (Success) {String} content Foyer créé
+*/
 
- */
+// route to confiure a user (POST http://localhost:3000/api/createHearth)
+apiRoutes.post('/createHearth', function(req, res) {
 
+  let {token, hearth} = req.body
+  let user = jwt.decode(token)
 
+  if(!user.name || !hearth){
+    return res.json({ success: false, content: 'Information manquantante.' });
+  }
+
+  User.findById(user._id, (e, findUser) => {
+    let newHearth = new Hearth({
+      name: hearth
+    })
+    newHearth.addUser(findUser, () => {
+      newHearth.save(() => {
+        token = jwt.sign(findUser.toObject(), app.get('superSecret'), {
+          expiresInMinutes: 1440 // expires in 24 hours
+        })
+        res.json({
+          success: true,
+          token: token,
+          content : "Foyer créé !"
+        })
+      })
+    })
+  })
+});
 
 /**
- * @api {post} /api/configure Configure
- * @apiName Configure
+ * @api {post} /api/linkHearth Link Hearth
+ * @apiName Link Hearth
  * @apiGroup Api
  * @apiDescription
- * Save user configuration into database
+ * Link user to a existant hearth
  * @apiUse ApiMiddleware
  * @apiParam {String} token jwt token
- * @apiParam {String} heart User heart name
- * @apiParam {String} wage User wage
- * @apiParam {String} budget User budget
- * @apiParam {String} saving User saving
+ * @apiParam {String} heart Heart name
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} content Information manquantante.
+ * @apiError (ErrorFind) {Boolean} success false
+ * @apiError (ErrorFind) {String} content Foyer introuvable.
+ * @apiSuccess (Success) {Boolean} success true
+ * @apiSuccess (Success) {String} token updated jwt token
+ * @apiSuccess (Success) {String} content Utilisateur attaché
+ */
+
+// route to confiure a user (POST http://localhost:3000/api/linkHearth)
+apiRoutes.post('/linkHearth', function(req, res) {
+
+  let {token, hearth} = req.body
+  let user = jwt.decode(token)
+
+  if(!user.name || !hearth){
+    return res.json({ success: false, content: 'Information manquantante.' });
+  }
+
+  User.findOne({name: user.name}, (err, findUser) => {
+    Hearth.findOne({name: hearth}, (e,findHearth) => {
+      if(!findHearth){
+        return res.json({ success: false, content: 'Foyer introuvable' });
+      }
+      console.log(findHearth);
+      findHearth.addUser(findUser, () => {
+        token = jwt.sign(findUser.toObject(), app.get('superSecret'), {
+          expiresInMinutes: 1440 // expires in 24 hours
+        })
+        res.json({
+          success: true,
+          token: token,
+          content : "Foyer créé !"
+        })
+      })
+    })
+  });
+});
+
+/**
+ * @api {post} /api/createResource Create Resource
+ * @apiName Create Resource
+ * @apiGroup Api
+ * @apiDescription
+ * Create a hearth's resource
+ * @apiUse ApiMiddleware
+ * @apiParam {String} token jwt token
+ * @apiParam {Object} resource resource object
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} content Erreur.
+ * @apiError (ErrorExist) {Boolean} success false
+ * @apiError (ErrorExist) {String} content Ressource déjà créée
  * @apiSuccess (Success) {Boolean} success true
  * @apiSuccess (Success) {String} token updated jwt token
  */
 
-// route to confiure a user (POST http://localhost:3000/api/configure)
-apiRoutes.post('/configure', function(req, res) {
+// route to confiure a user (POST http://localhost:3000/api/createResource)
+apiRoutes.post('/createResource', function(req, res) {
 
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  var nick = jwt.decode(token)._doc
-  User.findOne({name : nick.name}, function(err,user){
-    if(err){res.send(err)}
-    else{
-      if(req.body.wage){
-        user.wage = req.body.wage
-        user.markModified('wage')
-      }
-      if(req.body.budget){
-        user.budget = req.body.budget
-        user.markModified('budget')
-      }
-      if(req.body.saving){
-        user.saving = req.body.saving
-        user.markModified('saving')
-      }
-      if(req.body.hearth){
-        console.log(req.body.hearth);
-        Hearth.findOne({name: req.body.hearth},function(err,hearth){
-          console.log(hearth)
-          hearth.users.push(user)
-          hearth.save()
-          console.log(hearth);
-        })
-      }
-      user.save(()=>{
-        token = jwt.sign(user, app.get('superSecret'), {
-            expiresInMinutes: 1440 // expires in 24 hours
+  let {token, resource} = qs.parse(req.body)
+  let {name, value, date, repetition} = resource
+  let user = jwt.decode(token)
+
+  var newResource = new Resource({
+    name: name,
+    value: value,
+    date: date,
+    repetition: repetition
+  });
+
+  Hearth
+    .findById(user.hearth._id)
+    .exec((err, findHearth)=>{
+      findHearth.addResource(newResource, () => {
+        User
+          .findById(user._id)
+          .populate({
+            path: 'hearth',
+            populate: {
+              path: 'resources',
+              model: 'Resource'
+            }
           })
-        res.json({
-            success: true,
-            token: token,
-            content : "user configured"
+          .exec((err, populateUser)=>{
+            res.json({
+              success: true,
+              token: jwt.sign(populateUser.toObject(), app.get('superSecret'), {
+                expiresInMinutes: 1440 // expires in 24 hours
+              })
+            })
           })
+      }, e => {
+        switch (e.code) {
+          case 11000:
+            return res.json({ success: false, content: 'Ressource déjà créée' });
+            break;
+          default:
+            return res.json({ success: false, content: 'Erreur' });
+        };
       })
-    }
-  })
+    })
 });
 
 /**
