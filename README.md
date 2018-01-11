@@ -45,6 +45,8 @@
       ```
 
 ## TO-DO
- - [x] create hearth
- - [ ] join hearth
+ - [x] add resource
+ - [ ] list resource
+ - [ ] edition resource
+ - [ ] delete resource
  - [ ] hash password
