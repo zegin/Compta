@@ -219,6 +219,109 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/api/createResource",
+    "title": "Create Resource",
+    "name": "Create_Resource",
+    "group": "Api",
+    "description": "<p>Create a hearth's resource</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>jwt token</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "resource",
+            "description": "<p>resource object</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "Error": [
+          {
+            "group": "Error",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Erreur.</p>"
+          }
+        ],
+        "ErrorExist": [
+          {
+            "group": "ErrorExist",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "ErrorExist",
+            "type": "String",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Ressource déjà créée</p>"
+          }
+        ],
+        "Error 403": [
+          {
+            "group": "Error 403",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>false</p>"
+          },
+          {
+            "group": "Error 403",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>No token provided.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success": [
+          {
+            "group": "Success",
+            "type": "Boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true</p>"
+          },
+          {
+            "group": "Success",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>updated jwt token</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "server/server.js",
+    "groupTitle": "Api"
+  },
+  {
+    "type": "post",
     "url": "/api/linkHearth",
     "title": "Link Hearth",
     "name": "Link_Hearth",

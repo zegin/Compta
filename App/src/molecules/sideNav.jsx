@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'
 
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import Paper from 'material-ui/Paper';
@@ -13,7 +14,6 @@ import Subheader from 'material-ui/Subheader';
 
 class SideNav extends Component {
   render() {
-    console.log(this.props.disabled);
     const style = {
       wrapper: {
         order: '-1',
@@ -24,24 +24,32 @@ class SideNav extends Component {
       },
       item: {
         paddingLeft: this.props.muiTheme.spacing.desktopGutter
+      },
+      itemActive: {
+        paddingLeft: this.props.muiTheme.spacing.desktopGutter,
+        fontWeight: 'bold'
       }
     };
 
-    const Item = text =>
-      (<MenuItem
-        primaryText={text}
-        style={style.item}
-        disabled={this.props.disabled}
-      />)
-
+    const Item = (text, link) =>
+      (
+        <MenuItem
+          primaryText={text}
+          style={link === this.props.location.pathname ? style.itemActive : style.item}
+          disabled={this.props.disabled}
+          containerElement={
+            <Link to={link} />
+            }
+        />
+      )
     return (
       <Paper style={style.wrapper}>
         <Menu desktop={false}>
-          <Subheader style={style.header}>GESTION</Subheader>
-          {Item('Ressources')}
-          {Item('Dépenses')}
-          {Item('Budgets')}
-          {Item('Epargnes')}
+          <Subheader style={style.header}>GERER</Subheader>
+          {Item('Ressources', '/resource')}
+          {Item('Dépenses', '')}
+          {Item('Budgets', '')}
+          {Item('Epargnes', '')}
           <Divider />
           <Subheader style={style.header}>VISUALISER</Subheader>
           <MenuItem primaryText="Débits" leftIcon={<TrendingUp />} disabled={this.props.disabled} />
@@ -60,8 +68,11 @@ SideNav.propTypes = {
       primary1Color: PropTypes.string
     }),
     spacing: PropTypes.shape({
-      desktopGutter: PropTypes.string
+      desktopGutter: PropTypes.number
     })
+  }),
+  location: PropTypes.shape({
+    pathname: PropTypes.string
   }),
   disabled: PropTypes.bool
 };

@@ -18,6 +18,7 @@ class Main extends Component {
     this.setState({ open: !this.state.open })
   }
   render() {
+    console.log(this);
     const style = {
       container: {
         display: 'flex', /* crée un contexte flex pour ses enfants */

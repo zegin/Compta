@@ -9,6 +9,7 @@ var mongoose    = require('mongoose');
 var cors        = require('cors')
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
+var qs = require('qs');
 // var { User }   = require('./app/models'); // get our mongoose model
 // var Hearth   = require('./app/models'); // get our mongoose model
 // var Expense   = require('./app/models'); // get our mongoose model
@@ -20,6 +21,7 @@ var User = Models.user;
 var Expense = Models.expense;
 var Saving = Models.saving;
 var Budget = Models.budget;
+var Resource = Models.resource;
 
 // =======================
 // configuration =========
@@ -81,7 +83,13 @@ var apiRoutes = express.Router();
 apiRoutes.post('/authenticate', function(req, res) {
   User.
     findOne({name: req.body.user}).
-    populate('hearth').
+    populate({
+      path: 'hearth',
+      populate: {
+        path: 'resources',
+        model: 'Resource'
+      }
+    }).
     exec(function (err, user) {
       if (err) throw err;
       if (!user) {
@@ -275,6 +283,70 @@ apiRoutes.post('/linkHearth', function(req, res) {
       })
     })
   });
+});
+
+/**
+ * @api {post} /api/createResource Create Resource
+ * @apiName Create Resource
+ * @apiGroup Api
+ * @apiDescription
+ * Create a hearth's resource
+ * @apiUse ApiMiddleware
+ * @apiParam {String} token jwt token
+ * @apiParam {Object} resource resource object
+ * @apiError (Error) {Boolean} success false
+ * @apiError (Error) {String} content Erreur.
+ * @apiError (ErrorExist) {Boolean} success false
+ * @apiError (ErrorExist) {String} content Ressource déjà créée
+ * @apiSuccess (Success) {Boolean} success true
+ * @apiSuccess (Success) {String} token updated jwt token
+ */
+
+// route to confiure a user (POST http://localhost:3000/api/createResource)
+apiRoutes.post('/createResource', function(req, res) {
+
+  let {token, resource} = qs.parse(req.body)
+  let {name, value, date, repetition} = resource
+  let user = jwt.decode(token)
+
+  var newResource = new Resource({
+    name: name,
+    value: value,
+    date: date,
+    repetition: repetition
+  });
+
+  Hearth
+    .findById(user.hearth._id)
+    .exec((err, findHearth)=>{
+      findHearth.addResource(newResource, () => {
+        User
+          .findById(user._id)
+          .populate({
+            path: 'hearth',
+            populate: {
+              path: 'resources',
+              model: 'Resource'
+            }
+          })
+          .exec((err, populateUser)=>{
+            res.json({
+              success: true,
+              token: jwt.sign(populateUser.toObject(), app.get('superSecret'), {
+                expiresInMinutes: 1440 // expires in 24 hours
+              })
+            })
+          })
+      }, e => {
+        switch (e.code) {
+          case 11000:
+            return res.json({ success: false, content: 'Ressource déjà créée' });
+            break;
+          default:
+            return res.json({ success: false, content: 'Erreur' });
+        };
+      })
+    })
 });
 
 /**

@@ -48,6 +48,11 @@
     comma-spacing: 1
     eqeqeq: 1
     no-multi-spaces: 1
+    # Disable rule for react-router link
+    jsx-a11y/anchor-is-valid: [ "error", {
+      components: [ "Link" ],
+      specialLink: [ "to" ]
+    }]
 
     # possible errors
     comma-dangle: 0
