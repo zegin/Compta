@@ -81,6 +81,7 @@ var standardSchema = new Schema({
     name: { type : String , unique : true},
     value: Number,
     date: Date,
+    to: Date,
     repetition: String,
     hearth: { type: Schema.Types.ObjectId, ref: 'Hearth' }
 });
