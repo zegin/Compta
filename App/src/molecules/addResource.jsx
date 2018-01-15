@@ -50,11 +50,13 @@ class AddResource extends Component {
       value: '',
       date: null,
       repetition: '',
+      to: null,
       validationMessage: '',
       errorName: '',
       errorValue: '',
       errorDate: '',
-      errorRepetition: ''
+      errorRepetition: '',
+      errorTo: null,
     };
   }
 
@@ -70,28 +72,55 @@ class AddResource extends Component {
     });
   };
 
-  handleRepetition = (event, index, value) => this.setState({ repetition: value });
+  handleTo = (event, to) => {
+    this.setState({
+      to,
+    });
+  };
+
+  handleRepetition = (event, index, value) => {
+    if(value === "Once"){
+      this.setState({
+        to: null
+      });
+    }
+    this.setState({ repetition: value });
+  }
 
   handleSave = () => {
+
     const {
-      name, value, date, repetition
+      name, value, date, repetition, to
     } = this.state
+
     let errorValue = '';
     if (value) {
       errorValue = /^\d+$/.test(value) ? '' : 'Veuillez rentrer que des chiffres'
     } else {
       errorValue = 'Veuillez rentrer une valeur'
     }
+
+    let needTo = this.state.repetition && this.state.repetition !== "Once"
+    let errorTo = '';
+    if (needTo && !to) {
+      errorTo = 'Veuillez rentrer une date butoir'
+    }
+
     this.setState({
       errorName: name ? '' : 'Veuillez rentrer un nom',
       errorValue,
       errorDate: date ? '' : 'Veuillez rentrer une date',
       errorRepetition: repetition ? '' : 'Veuillez rentrer une fréquence',
+      errorTo
     });
+
     if (name && /^\d+$/.test(value) && date && repetition) {
+      if (needTo && !to) {
+        return
+      }
       CreateResource(
         {
-          name, value, date, repetition
+          name, value, date, repetition, to
         },
         () => {
           this.setState({
@@ -99,7 +128,8 @@ class AddResource extends Component {
             name: '',
             value: '',
             date: null,
-            repetition: ''
+            repetition: '',
+            to: ''
           });
         }, (e) => {
           this.setState({
@@ -149,6 +179,19 @@ class AddResource extends Component {
           <MenuItem value="Monthly" primaryText="Mensuel" />
           <MenuItem value="Once" primaryText="Une seule fois" />
         </SelectField>
+        {(!!this.state.repetition && this.state.repetition !== "Once") &&
+          <DatePicker
+            hintText="Jusqu'au"
+            mode="landscape"
+            floatingLabelText="Jusqu'à"
+            value={this.state.to}
+            onChange={this.handleTo}
+            locale="fr"
+            DateTimeFormat={DateTimeFormat}
+            errorText={this.state.errorTo}
+            openToYearSelection
+          />
+        }
         {this.state.validationMessage}
         <Button label="Sauvegarder" primary onClick={e => this.handleSave(e)} />
       </Wrapper>

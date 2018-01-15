@@ -306,15 +306,18 @@ apiRoutes.post('/linkHearth', function(req, res) {
 apiRoutes.post('/createResource', function(req, res) {
 
   let {token, resource} = qs.parse(req.body)
-  let {name, value, date, repetition} = resource
+  let {name, value, date, repetition, to} = resource
   let user = jwt.decode(token)
 
   var newResource = new Resource({
-    name: name,
-    value: value,
-    date: date,
-    repetition: repetition
+    name,
+    value,
+    date,
+    repetition,
+    to
   });
+
+  console.log(newResource);
 
   Hearth
     .findById(user.hearth._id)
