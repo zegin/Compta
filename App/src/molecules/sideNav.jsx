@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
+import { I18n } from 'react-i18next';
+
 
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import Paper from 'material-ui/Paper';
@@ -20,7 +22,8 @@ class SideNav extends Component {
       },
       header: {
         fontSize: '16px',
-        color: this.props.muiTheme.palette.primary1Color
+        color: this.props.muiTheme.palette.primary1Color,
+        textTransform: 'uppercase'
       },
       item: {
         paddingLeft: this.props.muiTheme.spacing.desktopGutter
@@ -43,21 +46,27 @@ class SideNav extends Component {
         />
       )
     return (
-      <Paper style={style.wrapper}>
-        <Menu desktop={false}>
-          <Subheader style={style.header}>GERER</Subheader>
-          {Item('Ressources', '/resource')}
-          {Item('Dépenses', '')}
-          {Item('Budgets', '')}
-          {Item('Epargnes', '')}
-          <Divider />
-          <Subheader style={style.header}>VISUALISER</Subheader>
-          <MenuItem primaryText="Débits" leftIcon={<TrendingUp />} disabled={this.props.disabled} />
-          <MenuItem primaryText="Crédits" leftIcon={<TrendingDown />} disabled={this.props.disabled} />
-          <MenuItem primaryText="Compte-Rendu" leftIcon={<MultilineChart />} disabled={this.props.disabled} />
-          <Divider />
-        </Menu>
-      </Paper>
+      <I18n>
+        {
+          (t, { i18n }) => (
+            <Paper style={style.wrapper}>
+              <Menu desktop={false}>
+                <Subheader style={style.header}>{t('title.manage')}</Subheader>
+                {Item(t('sections.resources'), '/resource')}
+                {Item(t('sections.expenses'), '')}
+                {Item(t('sections.budgets'), '')}
+                {Item(t('sections.savings'), '')}
+                <Divider />
+                <Subheader style={style.header}>VISUALISER</Subheader>
+                <MenuItem primaryText="Débits" leftIcon={<TrendingUp />} disabled={this.props.disabled} />
+                <MenuItem primaryText="Crédits" leftIcon={<TrendingDown />} disabled={this.props.disabled} />
+                <MenuItem primaryText="Compte-Rendu" leftIcon={<MultilineChart />} disabled={this.props.disabled} />
+                <Divider />
+              </Menu>
+            </Paper>
+          )
+        }
+      </I18n>
     );
   }
 }

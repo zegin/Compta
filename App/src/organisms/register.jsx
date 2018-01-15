@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { CreateUser } from '../actions/action'
+import { I18n } from 'react-i18next';
 
 class Register extends Component {
   constructor(props) {
@@ -58,21 +59,27 @@ class Register extends Component {
     )
 
     return (
-      <form>
-        <div>
-          {Field('firstName', 'errorFirstName', 'Prénom')}
-        </div>
-        <div>
-          {Field('lastName', 'errorLastName', 'Nom')}
-        </div>
-        <div>
-          {Field('user', 'errorUser', 'Nom d\'utilisateur')}
-        </div>
-        <div>
-          {Field('password', 'errorPassword', 'Mot de passe')}
-        </div>
-        <RaisedButton label="S'enregistrer" primary style={style} onClick={e => this.handleSubmit(e)} />
-      </form>
+      <I18n>
+        {
+          (t, { i18n }) => (
+            <form>
+              <div>
+                {Field('firstName', 'errorFirstName', t('user.firstName'))}
+              </div>
+              <div>
+                {Field('lastName', 'errorLastName', t('user.lastName'))}
+              </div>
+              <div>
+                {Field('user', 'errorUser', t('user.userName'))}
+              </div>
+              <div>
+                {Field('password', 'errorPassword', t('user.password'))}
+              </div>
+              <RaisedButton label={t('actions.register')} primary style={style} onClick={e => this.handleSubmit(e)} />
+            </form>
+          )
+        }
+      </I18n>
     );
   }
 }

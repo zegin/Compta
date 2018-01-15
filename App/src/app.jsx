@@ -1,6 +1,9 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import { Route, BrowserRouter } from 'react-router-dom'
+import { I18n } from 'react-i18next';
+
+import i18n from './i18n'; // initialized i18next instance using reactI18nextModule
 
 
 import AppBar from 'material-ui/AppBar';
@@ -77,23 +80,29 @@ export default class App extends React.Component {
       <SideNav disabled={!this.state.hearth} {...props} />
     )
     return (
-      <BrowserRouter>
-        <MuiThemeProvider muiTheme={getMuiTheme()}>
-          <Paper style={style.container}>
-            <AppBar title="Compta" iconClassNameRight="muidocs-icon-navigation-expand-more" onLeftIconButtonTouchTap={() => this.handleToggle()} />
-            <Route>
-              <div style={style.wrapper}>
-                <Route path="/" render={mySideNav} />
-                <div className="content" style={style.contents}>
-                  <Route path="/resource" component={Resource} />
-                  <Route exact path="/" render={() => content} />
-                </div>
-              </div>
-            </Route>
-            <Footer />
-          </Paper>
-        </MuiThemeProvider>
-      </BrowserRouter>
-    )
+      <I18n>
+        {
+          (t, { i18n }) => (
+            <BrowserRouter>
+              <MuiThemeProvider muiTheme={getMuiTheme()}>
+                <Paper style={style.container}>
+                  <AppBar title="Compta" iconClassNameRight="muidocs-icon-navigation-expand-more" onLeftIconButtonTouchTap={() => this.handleToggle()} />
+                  <Route>
+                    <div style={style.wrapper}>
+                      <Route path="/" render={mySideNav} />
+                      <div className="content" style={style.contents}>
+                        <Route path="/resource" component={Resource} />
+                        <Route exact path="/" render={() => content} />
+                      </div>
+                    </div>
+                  </Route>
+                  <Footer />
+                </Paper>
+              </MuiThemeProvider>
+            </BrowserRouter>
+          )
+        }
+      </I18n>
+        )
   }
 }

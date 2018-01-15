@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import areIntlLocalesSupported from 'intl-locales-supported';
+import { I18n, Trans } from 'react-i18next';
+
 
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import Paper from 'material-ui/Paper';
@@ -153,48 +155,57 @@ class AddResource extends Component {
 
   render() {
     return (
-      <Wrapper theme={this.props.muiTheme}>
-        Ajouter une ressource
-        {this.field('name', 'errorName', 'Nom')}
-        {this.field('value', 'errorValue', 'Montant')}
-        <DatePicker
-          hintText="Date"
-          mode="landscape"
-          floatingLabelText="Date"
-          value={this.state.date}
-          onChange={this.handleDate}
-          locale="fr"
-          DateTimeFormat={DateTimeFormat}
-          errorText={this.state.errorDate}
-        />
-        <SelectField
-          floatingLabelText="Répétition"
-          value={this.state.repetition}
-          onChange={this.handleRepetition}
-          errorText={this.state.errorRepetition}
-        >
-          <MenuItem value="Annual" primaryText="Annuel" />
-          <MenuItem value="Biannual" primaryText="Semestriel" />
-          <MenuItem value="Quarterly" primaryText="Trimestriel" />
-          <MenuItem value="Monthly" primaryText="Mensuel" />
-          <MenuItem value="Once" primaryText="Une seule fois" />
-        </SelectField>
-        {(!!this.state.repetition && this.state.repetition !== "Once") &&
-          <DatePicker
-            hintText="Jusqu'au"
-            mode="landscape"
-            floatingLabelText="Jusqu'à"
-            value={this.state.to}
-            onChange={this.handleTo}
-            locale="fr"
-            DateTimeFormat={DateTimeFormat}
-            errorText={this.state.errorTo}
-            openToYearSelection
-          />
+      <I18n>
+        {
+          (t, { i18n }) => (
+            <Wrapper theme={this.props.muiTheme}>
+              <Trans i18nKey="resource.add">
+                Add a resource
+              </Trans>
+              {/* Ajouter une ressource */}
+              {this.field('name', 'errorName', t('form.name'))}
+              {this.field('value', 'errorValue', t('form.value'))}
+              <DatePicker
+                hintText={t('form.date')}
+                mode="landscape"
+                floatingLabelText={t('form.date')}
+                value={this.state.date}
+                onChange={this.handleDate}
+                locale="fr"
+                DateTimeFormat={DateTimeFormat}
+                errorText={this.state.errorDate}
+              />
+              <SelectField
+                floatingLabelText={t('form.repetition')}
+                value={this.state.repetition}
+                onChange={this.handleRepetition}
+                errorText={this.state.errorRepetition}
+              >
+                <MenuItem value="Annual" primaryText={t('form.annual')} />
+                <MenuItem value="Biannual" primaryText={t('form.biannual')} />
+                <MenuItem value="Quarterly" primaryText={t('form.quarterly')} />
+                <MenuItem value="Monthly" primaryText={t('form.monthly')} />
+                <MenuItem value="Once" primaryText={t('form.once')} />
+              </SelectField>
+              {(!!this.state.repetition && this.state.repetition !== "Once") &&
+                <DatePicker
+                  hintText={t('form.to')}
+                  mode="landscape"
+                  floatingLabelText={t('form.to')}
+                  value={this.state.to}
+                  onChange={this.handleTo}
+                  locale="fr"
+                  DateTimeFormat={DateTimeFormat}
+                  errorText={this.state.errorTo}
+                  openToYearSelection
+                />
+              }
+              {this.state.validationMessage}
+              <Button label={t('actions.save')}  primary onClick={e => this.handleSave(e)} />
+            </Wrapper>
+          )
         }
-        {this.state.validationMessage}
-        <Button label="Sauvegarder" primary onClick={e => this.handleSave(e)} />
-      </Wrapper>
+      </I18n>
     );
   }
 }

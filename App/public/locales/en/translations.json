@@ -1,0 +1,37 @@
+{
+  "actions": {
+    "connection": "Connection",
+    "register": "Register",
+    "save": "Save"
+  },
+  "form": {
+    "annual": "Annual",
+    "biannual": "Biannual",
+    "date": "Date",
+    "monthly": "Monthly",
+    "name": "Name",
+    "once": "Once",
+    "quarterly": "Quarterly",
+    "repetition": "Repetition",
+    "to": "To",
+    "value": "Value"
+  },
+  "resource": {
+    "add": "Add a resource"
+  },
+  "sections": {
+    "budgets": "Budgets",
+    "expenses": "Expenses",
+    "resources": "Resources",
+    "savings": "Savings"
+  },
+  "title": {
+    "manage": "Manage"
+  },
+  "user": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "password": "Password",
+    "userName": "Username"
+  }
+}

@@ -3,6 +3,7 @@ import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton';
 import PropTypes from 'prop-types';
 import { LoginUser } from '../actions/action'
+import { I18n } from 'react-i18next';
 
 class Login extends Component {
   constructor(props) {
@@ -38,33 +39,37 @@ class Login extends Component {
       margin: 12,
     };
     return (
-      <div>
-        <form>
-          <div>
-            <TextField
-              name="user"
-              hintText="Utilisateur"
-              floatingLabelText="Utilisateur"
-              value={this.state.user}
-              errorText={this.state.errorUser}
-              onChange={e => this.onChange('user', e)}
-            />
-          </div>
-          <div>
-            <TextField
-              name="password"
-              hintText="Mot de passe"
-              floatingLabelText="Mot de passe"
-              value={this.state.password}
-              errorText={this.state.errorPassword}
-              onChange={e => this.onChange('password', e)}
-            />
-          </div>
-          <div>
-            <RaisedButton label="Connection" primary style={style} onClick={e => this.handleSubmit(e)} />
-          </div>
-        </form>
-      </div>
+      <I18n>
+        {
+          (t, { i18n }) => (
+            <form>
+              <div>
+                <TextField
+                  name="user"
+                  hintText={t('user.userName')}
+                  floatingLabelText={t('user.userName')}
+                  value={this.state.user}
+                  errorText={this.state.errorUser}
+                  onChange={e => this.onChange('user', e)}
+                />
+              </div>
+              <div>
+                <TextField
+                  name="password"
+                  hintText={t('user.password')}
+                  floatingLabelText={t('user.password')}
+                  value={this.state.password}
+                  errorText={this.state.errorPassword}
+                  onChange={e => this.onChange('password', e)}
+                />
+              </div>
+              <div>
+                <RaisedButton label={t('actions.connection')} primary style={style} onClick={e => this.handleSubmit(e)} />
+              </div>
+            </form>
+          )
+        }
+      </I18n>
     );
   }
 }

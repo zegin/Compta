@@ -44,7 +44,7 @@ var config = {
   devServer: { inline: true },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/template.html',
+      template: './public/template.html',
       files: {
         css: ['style.css'],
         js: [ "bundle.js"],

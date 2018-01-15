@@ -1,5 +1,6 @@
 {
   "name": "Compta-API",
+  "license" : "MIT",
   "main": "server.js",
   "dependencies": {
     "apidoc": "^0.17.6",

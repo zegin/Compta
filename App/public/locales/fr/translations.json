@@ -1,0 +1,37 @@
+{
+  "actions": {
+    "connection": "Connexion",
+    "register": "S'enregistrer",
+    "save": "Sauvegarder"
+  },
+  "form": {
+    "annual": "Annuel",
+    "biannual": "Semestriel",
+    "date": "Date",
+    "monthly": "Mensuel",
+    "name": "Nom",
+    "once": "Une fois",
+    "quarterly": "Trimestriel",
+    "repetition": "Répétition",
+    "to": "Jusqu'à",
+    "value": "Montant"
+  },
+  "resource": {
+    "add": "Ajouter une ressource"
+  },
+  "sections": {
+    "budgets": "Budgets",
+    "expenses": "Dépenses",
+    "resources": "Ressources",
+    "savings": "Épargnes"
+  },
+  "title": {
+    "manage": "Gérer"
+  },
+  "user": {
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "password": "Mot de passe",
+    "userName": "Nom d'utilisateur"
+  }
+}
