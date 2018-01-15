@@ -1,5 +1,5 @@
 {
-  "name": "Compta API",
+  "name": "Compta-API",
   "main": "server.js",
   "dependencies": {
     "apidoc": "^0.17.6",
